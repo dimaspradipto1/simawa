@@ -101,41 +101,61 @@
                 <!-- Dokumen Sertifikat & Tanggal Sertifikat -->
                 <div class="col-md-6">
                     <label class="form-label small fw-bold text-dark mb-1">Dokumen Sertifikat</label>
-                    <div class="p-2 rounded bg-light border-0 text-dark small text-break">
-                        @if($prestasiMandiri->file_dokumen_sertifikat)
-                            @php $isDrive = str_contains($prestasiMandiri->file_dokumen_sertifikat, 'drive.google.com'); @endphp
-                            <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'sertifikat']) }}" class="btn btn-sm btn-outline-primary py-1 px-3 d-inline-flex align-items-center" target="_blank">
-                                <i class="bi {{ $isDrive ? 'bi-google' : 'bi-file-earmark-check' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Unduh Berkas Sertifikat' }}
-                            </a>
-                        @elseif($prestasiMandiri->link_dokumen_sertifikat)
-                            <a href="{{ $prestasiMandiri->link_dokumen_sertifikat }}" target="_blank" class="text-primary text-decoration-none">
-                                <i class="bi bi-box-arrow-up-right me-1"></i> {{ $prestasiMandiri->link_dokumen_sertifikat }}
-                            </a>
+                    <div class="p-2 rounded bg-light border text-dark small text-break">
+                        @php
+                            $certFile = $prestasiMandiri->file_dokumen_sertifikat;
+                            $certLink = $prestasiMandiri->link_dokumen_sertifikat;
+                            $certUrl = $certFile ? (str_starts_with($certFile, 'http') ? $certFile : asset('storage/' . $certFile)) : $certLink;
+                            $isDrive = $certUrl && str_contains($certUrl, 'drive.google.com');
+                        @endphp
+                        @if($certUrl)
+                            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                                <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'sertifikat']) }}" class="btn btn-sm btn-outline-primary py-1 px-3 d-inline-flex align-items-center" target="_blank">
+                                    <i class="bi {{ $isDrive ? 'bi-google' : 'bi-file-earmark-check' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Unduh Berkas Sertifikat' }}
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 d-inline-flex align-items-center copy-url-btn" data-url="{{ $certUrl }}" title="Salin Link URL">
+                                    <i class="bi bi-clipboard me-1"></i> <span>Salin URL</span>
+                                </button>
+                            </div>
+                            <div class="mt-1 pt-1 border-top">
+                                <span class="text-muted d-block small" style="font-size: 0.72rem;"><i class="bi bi-link-45deg"></i> Link URL Sertifikat (SIMKATMAWA):</span>
+                                <a href="{{ $certUrl }}" target="_blank" class="text-primary text-break fw-medium" style="font-size: 0.8rem;">{{ $certUrl }}</a>
+                            </div>
                         @else
-                            -
+                            <span class="text-muted">-</span>
                         @endif
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label small fw-bold text-dark mb-1">Tanggal Sertifikat</label>
-                    <div class="p-2 rounded bg-light border-0 text-dark small">
+                    <div class="p-2 rounded bg-light border text-dark small">
                         {{ $prestasiMandiri->tanggal_sertifikat ? $prestasiMandiri->tanggal_sertifikat->format('Y-m-d') : '-' }}
                     </div>
                 </div>
 
                 <!-- Foto UPP & Link Dokumen Undangan -->
                 <div class="col-md-6">
-                    <label class="form-label small fw-bold text-dark mb-1">Foto UPP</label>
-                    <div class="p-2 rounded bg-light border-0 text-dark small">
+                    <label class="form-label small fw-bold text-dark mb-1">Foto UPP (Upacara Penyerahan Penghargaan)</label>
+                    <div class="p-2 rounded bg-light border text-dark small text-break">
                         @php 
-                            $fotoUpp = $prestasiMandiri->file_foto_upp ?? $prestasiMandiri->link_foto_upp;
+                            $uppFile = $prestasiMandiri->file_foto_upp ?: $prestasiMandiri->link_foto_upp;
+                            $uppUrl = $uppFile ? (str_starts_with($uppFile, 'http') ? $uppFile : asset('storage/' . $uppFile)) : null;
+                            $isDrive = $uppUrl && str_contains($uppUrl, 'drive.google.com');
                         @endphp
-                        @if($fotoUpp)
-                            @php $isDrive = str_contains($fotoUpp, 'drive.google.com'); @endphp
-                            <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'foto-upp']) }}" class="btn btn-sm btn-outline-success py-1 px-3 d-inline-flex align-items-center" target="_blank">
-                                <i class="bi {{ $isDrive ? 'bi-google' : 'bi-image' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Lihat Foto UPP' }}
-                            </a>
+                        @if($uppUrl)
+                            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                                <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'foto-upp']) }}" class="btn btn-sm btn-outline-success py-1 px-3 d-inline-flex align-items-center" target="_blank">
+                                    <i class="bi {{ $isDrive ? 'bi-google' : 'bi-image' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Lihat Foto UPP' }}
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 d-inline-flex align-items-center copy-url-btn" data-url="{{ $uppUrl }}" title="Salin Link URL">
+                                    <i class="bi bi-clipboard me-1"></i> <span>Salin URL</span>
+                                </button>
+                            </div>
+                            <div class="mt-1 pt-1 border-top">
+                                <span class="text-muted d-block small" style="font-size: 0.72rem;"><i class="bi bi-link-45deg"></i> Link URL Foto UPP (SIMKATMAWA):</span>
+                                <a href="{{ $uppUrl }}" target="_blank" class="text-primary text-break fw-medium" style="font-size: 0.8rem;">{{ $uppUrl }}</a>
+                            </div>
                         @else
                             <span class="text-muted">-</span>
                         @endif
@@ -144,11 +164,22 @@
 
                 <div class="col-md-6">
                     <label class="form-label small fw-bold text-dark mb-1">Link Dokumen Undangan</label>
-                    <div class="p-2 rounded bg-light border-0 text-dark small text-break">
+                    <div class="p-2 rounded bg-light border text-dark small text-break">
                         @if($prestasiMandiri->link_dokumen_undangan)
-                            <a href="{{ $prestasiMandiri->link_dokumen_undangan }}" target="_blank" class="text-primary text-decoration-none">{{ $prestasiMandiri->link_dokumen_undangan }}</a>
+                            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                                <a href="{{ $prestasiMandiri->link_dokumen_undangan }}" target="_blank" class="btn btn-sm btn-outline-primary py-1 px-3 d-inline-flex align-items-center">
+                                    <i class="bi bi-box-arrow-up-right me-1"></i> Buka Undangan
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 d-inline-flex align-items-center copy-url-btn" data-url="{{ $prestasiMandiri->link_dokumen_undangan }}" title="Salin Link URL">
+                                    <i class="bi bi-clipboard me-1"></i> <span>Salin URL</span>
+                                </button>
+                            </div>
+                            <div class="mt-1 pt-1 border-top">
+                                <span class="text-muted d-block small" style="font-size: 0.72rem;"><i class="bi bi-link-45deg"></i> Link URL Undangan (SIMKATMAWA):</span>
+                                <a href="{{ $prestasiMandiri->link_dokumen_undangan }}" target="_blank" class="text-primary text-break fw-medium" style="font-size: 0.8rem;">{{ $prestasiMandiri->link_dokumen_undangan }}</a>
+                            </div>
                         @else
-                            -
+                            <span class="text-muted">-</span>
                         @endif
                     </div>
                 </div>
@@ -156,12 +187,26 @@
                 <!-- File Dokumen LPJ -->
                 <div class="col-md-6">
                     <label class="form-label small fw-bold text-dark mb-1">Berkas File LPJ</label>
-                    <div class="p-2 rounded bg-light border-0 text-dark small">
-                        @if($prestasiMandiri->file_dokumen_lpj)
-                            @php $isDrive = str_contains($prestasiMandiri->file_dokumen_lpj, 'drive.google.com'); @endphp
-                            <a href="{{ route('prestasi-mandiri.download-lpj', $prestasiMandiri->id) }}" class="btn btn-sm btn-outline-success py-1 px-3 d-inline-flex align-items-center" target="_blank">
-                                <i class="bi {{ $isDrive ? 'bi-google' : 'bi-download' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Unduh Berkas LPJ' }}
-                            </a>
+                    <div class="p-2 rounded bg-light border text-dark small text-break">
+                        @php
+                            $lpjFile = $prestasiMandiri->file_dokumen_lpj;
+                            $lpjLink = $prestasiMandiri->link_dokumen_lpj;
+                            $lpjUrl = $lpjFile ? (str_starts_with($lpjFile, 'http') ? $lpjFile : asset('storage/' . $lpjFile)) : $lpjLink;
+                            $isDrive = $lpjUrl && str_contains($lpjUrl, 'drive.google.com');
+                        @endphp
+                        @if($lpjUrl)
+                            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                                <a href="{{ route('prestasi-mandiri.download-lpj', $prestasiMandiri->id) }}" class="btn btn-sm btn-outline-success py-1 px-3 d-inline-flex align-items-center" target="_blank">
+                                    <i class="bi {{ $isDrive ? 'bi-google' : 'bi-download' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Unduh Berkas LPJ' }}
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 d-inline-flex align-items-center copy-url-btn" data-url="{{ $lpjUrl }}" title="Salin Link URL">
+                                    <i class="bi bi-clipboard me-1"></i> <span>Salin URL</span>
+                                </button>
+                            </div>
+                            <div class="mt-1 pt-1 border-top">
+                                <span class="text-muted d-block small" style="font-size: 0.72rem;"><i class="bi bi-link-45deg"></i> Link URL LPJ:</span>
+                                <a href="{{ $lpjUrl }}" target="_blank" class="text-primary text-break fw-medium" style="font-size: 0.8rem;">{{ $lpjUrl }}</a>
+                            </div>
                         @else
                             <span class="text-muted">-</span>
                         @endif
@@ -171,19 +216,33 @@
                 <!-- Dokumen Tambahan & Kontak -->
                 <div class="col-md-6">
                     <label class="form-label small fw-bold text-dark mb-1">No. HP / WhatsApp</label>
-                    <div class="p-2 rounded bg-light border-0 text-dark small">
+                    <div class="p-2 rounded bg-light border text-dark small">
                         {{ $prestasiMandiri->no_hp ?? '-' }}
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label small fw-bold text-dark mb-1">KTM (Kartu Tanda Mahasiswa)</label>
-                    <div class="p-2 rounded bg-light border-0 text-dark small">
-                        @if($prestasiMandiri->file_ktm)
-                            @php $isDrive = str_contains($prestasiMandiri->file_ktm, 'drive.google.com'); @endphp
-                            <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'ktm']) }}" class="btn btn-sm btn-outline-primary py-1 px-3 d-inline-flex align-items-center" target="_blank">
-                                <i class="bi {{ $isDrive ? 'bi-google' : 'bi-person-badge' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Unduh KTM' }}
-                            </a>
+                    <div class="p-2 rounded bg-light border text-dark small text-break">
+                        @php
+                            $ktmFile = $prestasiMandiri->file_ktm;
+                            $ktmLink = $prestasiMandiri->link_ktm;
+                            $ktmUrl = $ktmFile ? (str_starts_with($ktmFile, 'http') ? $ktmFile : asset('storage/' . $ktmFile)) : $ktmLink;
+                            $isDrive = $ktmUrl && str_contains($ktmUrl, 'drive.google.com');
+                        @endphp
+                        @if($ktmUrl)
+                            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                                <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'ktm']) }}" class="btn btn-sm btn-outline-primary py-1 px-3 d-inline-flex align-items-center" target="_blank">
+                                    <i class="bi {{ $isDrive ? 'bi-google' : 'bi-person-badge' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Unduh KTM' }}
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 d-inline-flex align-items-center copy-url-btn" data-url="{{ $ktmUrl }}" title="Salin Link URL">
+                                    <i class="bi bi-clipboard me-1"></i> <span>Salin URL</span>
+                                </button>
+                            </div>
+                            <div class="mt-1 pt-1 border-top">
+                                <span class="text-muted d-block small" style="font-size: 0.72rem;"><i class="bi bi-link-45deg"></i> Link URL KTM:</span>
+                                <a href="{{ $ktmUrl }}" target="_blank" class="text-primary text-break fw-medium" style="font-size: 0.8rem;">{{ $ktmUrl }}</a>
+                            </div>
                         @else
                             <span class="text-muted">-</span>
                         @endif
@@ -192,12 +251,26 @@
 
                 <div class="col-md-6">
                     <label class="form-label small fw-bold text-dark mb-1">Surat Pengajuan Reward Prestasi</label>
-                    <div class="p-2 rounded bg-light border-0 text-dark small">
-                        @if($prestasiMandiri->file_pengajuan_reward)
-                            @php $isDrive = str_contains($prestasiMandiri->file_pengajuan_reward, 'drive.google.com'); @endphp
-                            <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'reward']) }}" class="btn btn-sm btn-outline-success py-1 px-3 d-inline-flex align-items-center" target="_blank">
-                                <i class="bi {{ $isDrive ? 'bi-google' : 'bi-file-earmark-arrow-up' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Unduh Surat Reward' }}
-                            </a>
+                    <div class="p-2 rounded bg-light border text-dark small text-break">
+                        @php
+                            $rewFile = $prestasiMandiri->file_pengajuan_reward;
+                            $rewLink = $prestasiMandiri->link_pengajuan_reward;
+                            $rewUrl = $rewFile ? (str_starts_with($rewFile, 'http') ? $rewFile : asset('storage/' . $rewFile)) : $rewLink;
+                            $isDrive = $rewUrl && str_contains($rewUrl, 'drive.google.com');
+                        @endphp
+                        @if($rewUrl)
+                            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                                <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'reward']) }}" class="btn btn-sm btn-outline-success py-1 px-3 d-inline-flex align-items-center" target="_blank">
+                                    <i class="bi {{ $isDrive ? 'bi-google' : 'bi-file-earmark-arrow-up' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Unduh Surat Reward' }}
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 d-inline-flex align-items-center copy-url-btn" data-url="{{ $rewUrl }}" title="Salin Link URL">
+                                    <i class="bi bi-clipboard me-1"></i> <span>Salin URL</span>
+                                </button>
+                            </div>
+                            <div class="mt-1 pt-1 border-top">
+                                <span class="text-muted d-block small" style="font-size: 0.72rem;"><i class="bi bi-link-45deg"></i> Link URL Surat Reward:</span>
+                                <a href="{{ $rewUrl }}" target="_blank" class="text-primary text-break fw-medium" style="font-size: 0.8rem;">{{ $rewUrl }}</a>
+                            </div>
                         @else
                             <span class="text-muted">-</span>
                         @endif
@@ -206,12 +279,26 @@
 
                 <div class="col-md-6">
                     <label class="form-label small fw-bold text-dark mb-1">Surat Tugas WR III / WD I</label>
-                    <div class="p-2 rounded bg-light border-0 text-dark small">
-                        @if($prestasiMandiri->file_surat_tugas)
-                            @php $isDrive = str_contains($prestasiMandiri->file_surat_tugas, 'drive.google.com'); @endphp
-                            <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'surat-tugas']) }}" class="btn btn-sm btn-outline-info py-1 px-3 d-inline-flex align-items-center" target="_blank">
-                                <i class="bi {{ $isDrive ? 'bi-google' : 'bi-file-earmark-check' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Unduh Surat Tugas' }}
-                            </a>
+                    <div class="p-2 rounded bg-light border text-dark small text-break">
+                        @php
+                            $tgsFile = $prestasiMandiri->file_surat_tugas;
+                            $tgsLink = $prestasiMandiri->link_surat_tugas;
+                            $tgsUrl = $tgsFile ? (str_starts_with($tgsFile, 'http') ? $tgsFile : asset('storage/' . $tgsFile)) : $tgsLink;
+                            $isDrive = $tgsUrl && str_contains($tgsUrl, 'drive.google.com');
+                        @endphp
+                        @if($tgsUrl)
+                            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                                <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'surat-tugas']) }}" class="btn btn-sm btn-outline-info py-1 px-3 d-inline-flex align-items-center" target="_blank">
+                                    <i class="bi {{ $isDrive ? 'bi-google' : 'bi-file-earmark-check' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Unduh Surat Tugas' }}
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 d-inline-flex align-items-center copy-url-btn" data-url="{{ $tgsUrl }}" title="Salin Link URL">
+                                    <i class="bi bi-clipboard me-1"></i> <span>Salin URL</span>
+                                </button>
+                            </div>
+                            <div class="mt-1 pt-1 border-top">
+                                <span class="text-muted d-block small" style="font-size: 0.72rem;"><i class="bi bi-link-45deg"></i> Link URL Surat Tugas:</span>
+                                <a href="{{ $tgsUrl }}" target="_blank" class="text-primary text-break fw-medium" style="font-size: 0.8rem;">{{ $tgsUrl }}</a>
+                            </div>
                         @else
                             <span class="text-muted">-</span>
                         @endif
@@ -306,4 +393,44 @@
         </div>
     </div>
 </section>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.copy-url-btn').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const url = this.getAttribute('data-url');
+            if (url) {
+                navigator.clipboard.writeText(url).then(() => {
+                    const icon = this.querySelector('i');
+                    const span = this.querySelector('span');
+                    const originalText = span ? span.innerText : 'Salin URL';
+
+                    this.classList.remove('btn-outline-secondary');
+                    this.classList.add('btn-success');
+                    if (icon) icon.className = 'bi bi-check2 me-1';
+                    if (span) span.innerText = 'Tersalin!';
+
+                    setTimeout(() => {
+                        this.classList.remove('btn-success');
+                        this.classList.add('btn-outline-secondary');
+                        if (icon) icon.className = 'bi bi-clipboard me-1';
+                        if (span) span.innerText = originalText;
+                    }, 2000);
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const tempInput = document.createElement('input');
+                    tempInput.value = url;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempInput);
+                    alert('URL berhasil disalin: ' + url);
+                });
+            }
+        });
+    });
+});
+</script>
+@endpush
 @endsection

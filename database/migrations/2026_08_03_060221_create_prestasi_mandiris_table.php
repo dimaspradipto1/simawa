@@ -33,8 +33,11 @@ return new class extends Migration
             $table->string('file_dokumen_lpj')->nullable();
             $table->string('no_hp')->nullable();
             $table->string('file_pengajuan_reward')->nullable();
+            $table->string('link_pengajuan_reward')->nullable();
             $table->string('file_ktm')->nullable();
+            $table->string('link_ktm')->nullable();
             $table->string('file_surat_tugas')->nullable();
+            $table->string('link_surat_tugas')->nullable();
             $table->text('keterangan')->nullable();
             $table->integer('tahun')->nullable();
             $table->string('pt')->default('Universitas Ibnu Sina');

@@ -147,8 +147,11 @@ class PrestasiMandiriController extends Controller
             'file_dokumen_lpj'        => ['nullable', 'file', 'mimes:pdf,doc,docx,zip', 'max:20480'],
             'no_hp'                   => ['nullable', 'string', 'max:30'],
             'file_pengajuan_reward'   => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
+            'link_pengajuan_reward'   => ['nullable', 'string', 'max:255'],
             'file_ktm'                => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
+            'link_ktm'                => ['nullable', 'string', 'max:255'],
             'file_surat_tugas'        => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
+            'link_surat_tugas'        => ['nullable', 'string', 'max:255'],
             'keterangan'              => ['nullable', 'string'],
             'data_mahasiswa'          => ['nullable', 'array'],
             'data_mahasiswa.*.nim'    => ['nullable', 'string'],
@@ -202,37 +205,66 @@ class PrestasiMandiriController extends Controller
             $file = $request->file('file_dokumen_sertifikat');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_FILE_SERTIFIKAT', 'sertifikat', $submitterName);
             $validated['file_dokumen_sertifikat'] = $upload['url'];
+            if (empty($validated['link_dokumen_sertifikat'])) {
+                $validated['link_dokumen_sertifikat'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_dokumen_sertifikat']) && empty($validated['file_dokumen_sertifikat'])) {
+            $validated['file_dokumen_sertifikat'] = $validated['link_dokumen_sertifikat'];
         }
 
         if ($request->hasFile('file_dokumen_lpj')) {
             $file = $request->file('file_dokumen_lpj');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_FILE_LPJ', 'dokumen_lpj', $submitterName);
             $validated['file_dokumen_lpj'] = $upload['url'];
+            if (empty($validated['link_dokumen_lpj'])) {
+                $validated['link_dokumen_lpj'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_dokumen_lpj']) && empty($validated['file_dokumen_lpj'])) {
+            $validated['file_dokumen_lpj'] = $validated['link_dokumen_lpj'];
         }
 
         if ($request->hasFile('file_pengajuan_reward')) {
             $file = $request->file('file_pengajuan_reward');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_SURAT_PENGAJUAN_REWARD_PRESTASI', 'surat_reward', $submitterName);
             $validated['file_pengajuan_reward'] = $upload['url'];
+            if (empty($validated['link_pengajuan_reward'])) {
+                $validated['link_pengajuan_reward'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_pengajuan_reward']) && empty($validated['file_pengajuan_reward'])) {
+            $validated['file_pengajuan_reward'] = $validated['link_pengajuan_reward'];
         }
 
         if ($request->hasFile('file_ktm')) {
             $file = $request->file('file_ktm');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_KTM', 'ktm', $submitterName);
             $validated['file_ktm'] = $upload['url'];
+            if (empty($validated['link_ktm'])) {
+                $validated['link_ktm'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_ktm']) && empty($validated['file_ktm'])) {
+            $validated['file_ktm'] = $validated['link_ktm'];
         }
 
         if ($request->hasFile('file_surat_tugas')) {
             $file = $request->file('file_surat_tugas');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_SURAT_WRIII_ATAU_WDI', 'surat_tugas', $submitterName);
             $validated['file_surat_tugas'] = $upload['url'];
+            if (empty($validated['link_surat_tugas'])) {
+                $validated['link_surat_tugas'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_surat_tugas']) && empty($validated['file_surat_tugas'])) {
+            $validated['file_surat_tugas'] = $validated['link_surat_tugas'];
         }
 
         if ($request->hasFile('file_foto_upp')) {
             $file = $request->file('file_foto_upp');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_FOTO_UPP', 'foto_upp', $submitterName);
             $validated['file_foto_upp'] = $upload['url'];
-            $validated['link_foto_upp'] = $upload['url'];
+            if (empty($validated['link_foto_upp'])) {
+                $validated['link_foto_upp'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_foto_upp']) && empty($validated['file_foto_upp'])) {
+            $validated['file_foto_upp'] = $validated['link_foto_upp'];
         }
 
         $validated['data_mahasiswa'] = $mahasiswa;
@@ -324,8 +356,11 @@ class PrestasiMandiriController extends Controller
             'file_dokumen_lpj'        => ['nullable', 'file', 'mimes:pdf,doc,docx,zip', 'max:20480'],
             'no_hp'                   => ['nullable', 'string', 'max:30'],
             'file_pengajuan_reward'   => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
+            'link_pengajuan_reward'   => ['nullable', 'string', 'max:255'],
             'file_ktm'                => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
+            'link_ktm'                => ['nullable', 'string', 'max:255'],
             'file_surat_tugas'        => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
+            'link_surat_tugas'        => ['nullable', 'string', 'max:255'],
             'keterangan'              => ['nullable', 'string'],
             'data_mahasiswa'          => ['nullable', 'array'],
             'data_dosen'              => ['nullable', 'array'],
@@ -371,59 +406,88 @@ class PrestasiMandiriController extends Controller
         $submitterName = auth()->check() ? auth()->user()->name : ($user?->name ?? (!empty($mahasiswa[0]['nama']) ? $mahasiswa[0]['nama'] : 'user'));
 
         if ($request->hasFile('file_dokumen_sertifikat')) {
-            if ($prestasiMandiri->file_dokumen_sertifikat) {
+            if ($prestasiMandiri->file_dokumen_sertifikat && str_contains($prestasiMandiri->file_dokumen_sertifikat, 'drive.google.com')) {
                 $this->driveService->deleteFile($prestasiMandiri->file_dokumen_sertifikat);
             }
             $file = $request->file('file_dokumen_sertifikat');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_FILE_SERTIFIKAT', 'sertifikat', $submitterName);
             $validated['file_dokumen_sertifikat'] = $upload['url'];
+            if (empty($validated['link_dokumen_sertifikat'])) {
+                $validated['link_dokumen_sertifikat'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_dokumen_sertifikat']) && empty($validated['file_dokumen_sertifikat'])) {
+            $validated['file_dokumen_sertifikat'] = $validated['link_dokumen_sertifikat'];
         }
 
         if ($request->hasFile('file_dokumen_lpj')) {
-            if ($prestasiMandiri->file_dokumen_lpj) {
+            if ($prestasiMandiri->file_dokumen_lpj && str_contains($prestasiMandiri->file_dokumen_lpj, 'drive.google.com')) {
                 $this->driveService->deleteFile($prestasiMandiri->file_dokumen_lpj);
             }
             $file = $request->file('file_dokumen_lpj');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_FILE_LPJ', 'dokumen_lpj', $submitterName);
             $validated['file_dokumen_lpj'] = $upload['url'];
+            if (empty($validated['link_dokumen_lpj'])) {
+                $validated['link_dokumen_lpj'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_dokumen_lpj']) && empty($validated['file_dokumen_lpj'])) {
+            $validated['file_dokumen_lpj'] = $validated['link_dokumen_lpj'];
         }
 
         if ($request->hasFile('file_pengajuan_reward')) {
-            if ($prestasiMandiri->file_pengajuan_reward) {
+            if ($prestasiMandiri->file_pengajuan_reward && str_contains($prestasiMandiri->file_pengajuan_reward, 'drive.google.com')) {
                 $this->driveService->deleteFile($prestasiMandiri->file_pengajuan_reward);
             }
             $file = $request->file('file_pengajuan_reward');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_SURAT_PENGAJUAN_REWARD_PRESTASI', 'surat_reward', $submitterName);
             $validated['file_pengajuan_reward'] = $upload['url'];
+            if (empty($validated['link_pengajuan_reward'])) {
+                $validated['link_pengajuan_reward'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_pengajuan_reward']) && empty($validated['file_pengajuan_reward'])) {
+            $validated['file_pengajuan_reward'] = $validated['link_pengajuan_reward'];
         }
 
         if ($request->hasFile('file_ktm')) {
-            if ($prestasiMandiri->file_ktm) {
+            if ($prestasiMandiri->file_ktm && str_contains($prestasiMandiri->file_ktm, 'drive.google.com')) {
                 $this->driveService->deleteFile($prestasiMandiri->file_ktm);
             }
             $file = $request->file('file_ktm');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_KTM', 'ktm', $submitterName);
             $validated['file_ktm'] = $upload['url'];
+            if (empty($validated['link_ktm'])) {
+                $validated['link_ktm'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_ktm']) && empty($validated['file_ktm'])) {
+            $validated['file_ktm'] = $validated['link_ktm'];
         }
 
         if ($request->hasFile('file_surat_tugas')) {
-            if ($prestasiMandiri->file_surat_tugas) {
+            if ($prestasiMandiri->file_surat_tugas && str_contains($prestasiMandiri->file_surat_tugas, 'drive.google.com')) {
                 $this->driveService->deleteFile($prestasiMandiri->file_surat_tugas);
             }
             $file = $request->file('file_surat_tugas');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_SURAT_WRIII_ATAU_WDI', 'surat_tugas', $submitterName);
             $validated['file_surat_tugas'] = $upload['url'];
+            if (empty($validated['link_surat_tugas'])) {
+                $validated['link_surat_tugas'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_surat_tugas']) && empty($validated['file_surat_tugas'])) {
+            $validated['file_surat_tugas'] = $validated['link_surat_tugas'];
         }
 
         if ($request->hasFile('file_foto_upp')) {
             $oldFoto = $prestasiMandiri->file_foto_upp ?? $prestasiMandiri->link_foto_upp;
-            if ($oldFoto) {
+            if ($oldFoto && str_contains($oldFoto, 'drive.google.com')) {
                 $this->driveService->deleteFile($oldFoto);
             }
             $file = $request->file('file_foto_upp');
             $upload = $this->driveService->upload($file, 'GOOGLE_DRIVE_UPLOAD_FOTO_UPP', 'foto_upp', $submitterName);
             $validated['file_foto_upp'] = $upload['url'];
-            $validated['link_foto_upp'] = $upload['url'];
+            if (empty($validated['link_foto_upp'])) {
+                $validated['link_foto_upp'] = $upload['url'];
+            }
+        } elseif (!empty($validated['link_foto_upp']) && empty($validated['file_foto_upp'])) {
+            $validated['file_foto_upp'] = $validated['link_foto_upp'];
         }
 
         // If student name changed and no new file was uploaded, synchronize name on Google Drive
@@ -511,12 +575,13 @@ class PrestasiMandiriController extends Controller
         $this->authorizeStudentAccess($prestasiMandiri);
 
         $filePath = match($type) {
-            'lpj'         => $prestasiMandiri->file_dokumen_lpj,
-            'sertifikat'  => $prestasiMandiri->file_dokumen_sertifikat,
-            'reward'      => $prestasiMandiri->file_pengajuan_reward,
-            'ktm'                  => $prestasiMandiri->file_ktm,
-            'surat-tugas'          => $prestasiMandiri->file_surat_tugas,
-            'foto-upp', 'foto_upp' => $prestasiMandiri->file_foto_upp ?? $prestasiMandiri->link_foto_upp,
+            'lpj'                  => $prestasiMandiri->file_dokumen_lpj ?: $prestasiMandiri->link_dokumen_lpj,
+            'sertifikat'           => $prestasiMandiri->file_dokumen_sertifikat ?: $prestasiMandiri->link_dokumen_sertifikat,
+            'reward'               => $prestasiMandiri->file_pengajuan_reward ?: $prestasiMandiri->link_pengajuan_reward,
+            'ktm'                  => $prestasiMandiri->file_ktm ?: $prestasiMandiri->link_ktm,
+            'surat-tugas'          => $prestasiMandiri->file_surat_tugas ?: $prestasiMandiri->link_surat_tugas,
+            'foto-upp', 'foto_upp' => $prestasiMandiri->file_foto_upp ?: $prestasiMandiri->link_foto_upp,
+            'undangan'             => $prestasiMandiri->link_dokumen_undangan,
             default                => null,
         };
 

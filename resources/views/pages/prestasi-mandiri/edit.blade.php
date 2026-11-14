@@ -259,6 +259,15 @@
           </div>
 
           <div class="col-md-6">
+            <label for="link_dokumen_sertifikat" class="form-label fw-medium">Link Dokumen Sertifikat <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_dokumen_sertifikat') is-invalid @enderror" id="link_dokumen_sertifikat" name="link_dokumen_sertifikat" value="{{ old('link_dokumen_sertifikat', $prestasiMandiri->link_dokumen_sertifikat) }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan Google Drive / URL dokumen untuk SIMKATMAWA.</small>
+          </div>
+
+          <div class="col-md-6">
             <label for="tanggal_sertifikat" class="form-label fw-medium">Tanggal Sertifikat<span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-calendar-event"></i></span>
@@ -267,19 +276,19 @@
           </div>
 
           <div class="col-md-6">
-            <label for="file_foto_upp" class="form-label fw-medium">Upload Foto UPP<span class="text-danger">*</span></label>
+            <label for="file_foto_upp" class="form-label fw-medium">Upload Foto UPP</label>
             @php 
               $existingFotoUpp = $prestasiMandiri->file_foto_upp ?? $prestasiMandiri->link_foto_upp;
             @endphp
             @if($existingFotoUpp)
-              @php $isDrive = str_contains($existingFotoUpp, 'drive.google.com'); @endphp
+              @php $isDrive = str_contains($existingFotoUpp, 'drive.google.com') || filter_var($existingFotoUpp, FILTER_VALIDATE_URL); @endphp
               <div class="mb-1 d-flex align-items-center justify-content-between p-1 px-2 bg-light rounded border">
                 <span class="small text-truncate text-secondary" style="max-width: 250px;">
-                  <i class="bi {{ $isDrive ? 'bi-google text-success' : 'bi-image text-success' }} me-1"></i>
-                  {{ $isDrive ? 'Berkas Google Drive' : basename($existingFotoUpp) }}
+                  <i class="bi {{ $isDrive ? 'bi-link-45deg text-success' : 'bi-image text-success' }} me-1"></i>
+                  {{ $isDrive ? 'Berkas URL / Drive' : basename($existingFotoUpp) }}
                 </span>
                 <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'foto-upp']) }}" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem;" target="_blank">
-                  <i class="bi {{ $isDrive ? 'bi-box-arrow-up-right' : 'bi-download' }}"></i> {{ $isDrive ? 'Buka Drive' : 'Lihat Berkas' }}
+                  <i class="bi {{ $isDrive ? 'bi-box-arrow-up-right' : 'bi-download' }}"></i> {{ $isDrive ? 'Buka Link' : 'Lihat Berkas' }}
                 </a>
               </div>
             @endif
@@ -291,24 +300,37 @@
           </div>
 
           <div class="col-md-6">
-            <label for="link_dokumen_undangan" class="form-label fw-medium">Link Dokumen Undangan<span class="text-danger">*</span></label>
+            <label for="link_foto_upp" class="form-label fw-medium">Link Foto UPP <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_foto_upp') is-invalid @enderror" id="link_foto_upp" name="link_foto_upp" value="{{ old('link_foto_upp', $prestasiMandiri->link_foto_upp) }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan foto penerimaan penghargaan untuk SIMKATMAWA.</small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="link_dokumen_undangan" class="form-label fw-medium">Link Dokumen Undangan</label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
               <input type="url" class="form-control @error('link_dokumen_undangan') is-invalid @enderror" id="link_dokumen_undangan" name="link_dokumen_undangan" value="{{ old('link_dokumen_undangan', $prestasiMandiri->link_dokumen_undangan) }}" placeholder="URL">
             </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan dokumen undangan kegiatan / lomba.</small>
           </div>
 
           <div class="col-md-6">
-            <label for="file_dokumen_lpj" class="form-label fw-medium">Upload File LPJ<span class="text-danger">*</span></label>
-            @if($prestasiMandiri->file_dokumen_lpj)
-              @php $isDrive = str_contains($prestasiMandiri->file_dokumen_lpj, 'drive.google.com'); @endphp
+            <label for="file_dokumen_lpj" class="form-label fw-medium">Upload File LPJ</label>
+            @php 
+              $existingLpj = $prestasiMandiri->file_dokumen_lpj ?: $prestasiMandiri->link_dokumen_lpj;
+            @endphp
+            @if($existingLpj)
+              @php $isDrive = str_contains($existingLpj, 'drive.google.com') || filter_var($existingLpj, FILTER_VALIDATE_URL); @endphp
               <div class="mb-1 d-flex align-items-center justify-content-between p-1 px-2 bg-light rounded border">
                 <span class="small text-truncate text-secondary" style="max-width: 250px;">
-                  <i class="bi {{ $isDrive ? 'bi-google text-success' : 'bi-file-earmark-check text-success' }} me-1"></i>
-                  {{ $isDrive ? 'Berkas Google Drive' : basename($prestasiMandiri->file_dokumen_lpj) }}
+                  <i class="bi {{ $isDrive ? 'bi-link-45deg text-success' : 'bi-file-earmark-check text-success' }} me-1"></i>
+                  {{ $isDrive ? 'Berkas URL / Drive' : basename($existingLpj) }}
                 </span>
                 <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'lpj']) }}" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem;" target="_blank">
-                  <i class="bi {{ $isDrive ? 'bi-box-arrow-up-right' : 'bi-download' }}"></i> {{ $isDrive ? 'Buka Drive' : 'Unduh' }}
+                  <i class="bi {{ $isDrive ? 'bi-box-arrow-up-right' : 'bi-download' }}"></i> {{ $isDrive ? 'Buka Link' : 'Unduh' }}
                 </a>
               </div>
             @endif
@@ -317,6 +339,15 @@
               <input type="file" class="form-control @error('file_dokumen_lpj') is-invalid @enderror" id="file_dokumen_lpj" name="file_dokumen_lpj" accept=".pdf,.doc,.docx,.zip">
             </div>
             <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Format: .pdf, .docx, .doc, .zip (Maks. 20 MB). Kosongkan jika tidak ingin mengganti.</small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="link_dokumen_lpj" class="form-label fw-medium">Link Dokumen LPJ <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_dokumen_lpj') is-invalid @enderror" id="link_dokumen_lpj" name="link_dokumen_lpj" value="{{ old('link_dokumen_lpj', $prestasiMandiri->link_dokumen_lpj) }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan dokumen LPJ kegiatan untuk SIMKATMAWA.</small>
           </div>
 
           <div class="col-md-6">
@@ -329,16 +360,19 @@
           </div>
 
           <div class="col-md-6">
-            <label for="file_ktm" class="form-label fw-medium">Upload KTM (Kartu Tanda Mahasiswa)<span class="text-danger">*</span></label>
-            @if($prestasiMandiri->file_ktm)
-              @php $isDrive = str_contains($prestasiMandiri->file_ktm, 'drive.google.com'); @endphp
+            <label for="file_ktm" class="form-label fw-medium">Upload KTM (Kartu Tanda Mahasiswa)</label>
+            @php 
+              $existingKtm = $prestasiMandiri->file_ktm ?: $prestasiMandiri->link_ktm;
+            @endphp
+            @if($existingKtm)
+              @php $isDrive = str_contains($existingKtm, 'drive.google.com') || filter_var($existingKtm, FILTER_VALIDATE_URL); @endphp
               <div class="mb-1 d-flex align-items-center justify-content-between p-1 px-2 bg-light rounded border">
                 <span class="small text-truncate text-secondary" style="max-width: 250px;">
-                  <i class="bi {{ $isDrive ? 'bi-google text-success' : 'bi-file-earmark-check text-success' }} me-1"></i>
-                  {{ $isDrive ? 'Berkas Google Drive' : basename($prestasiMandiri->file_ktm) }}
+                  <i class="bi {{ $isDrive ? 'bi-link-45deg text-success' : 'bi-file-earmark-check text-success' }} me-1"></i>
+                  {{ $isDrive ? 'Berkas URL / Drive' : basename($existingKtm) }}
                 </span>
                 <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'ktm']) }}" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem;" target="_blank">
-                  <i class="bi {{ $isDrive ? 'bi-box-arrow-up-right' : 'bi-download' }}"></i> {{ $isDrive ? 'Buka Drive' : 'Unduh' }}
+                  <i class="bi {{ $isDrive ? 'bi-box-arrow-up-right' : 'bi-download' }}"></i> {{ $isDrive ? 'Buka Link' : 'Unduh' }}
                 </a>
               </div>
             @endif
@@ -350,16 +384,28 @@
           </div>
 
           <div class="col-md-6">
-            <label for="file_pengajuan_reward" class="form-label fw-medium">Upload Surat Pengajuan Reward Prestasi<span class="text-danger">*</span></label>
-            @if($prestasiMandiri->file_pengajuan_reward)
-              @php $isDrive = str_contains($prestasiMandiri->file_pengajuan_reward, 'drive.google.com'); @endphp
+            <label for="link_ktm" class="form-label fw-medium">Link KTM <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_ktm') is-invalid @enderror" id="link_ktm" name="link_ktm" value="{{ old('link_ktm', $prestasiMandiri->link_ktm) }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan berkas KTM mahasiswa untuk SIMKATMAWA.</small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="file_pengajuan_reward" class="form-label fw-medium">Upload Surat Pengajuan Reward Prestasi</label>
+            @php 
+              $existingReward = $prestasiMandiri->file_pengajuan_reward ?: $prestasiMandiri->link_pengajuan_reward;
+            @endphp
+            @if($existingReward)
+              @php $isDrive = str_contains($existingReward, 'drive.google.com') || filter_var($existingReward, FILTER_VALIDATE_URL); @endphp
               <div class="mb-1 d-flex align-items-center justify-content-between p-1 px-2 bg-light rounded border">
                 <span class="small text-truncate text-secondary" style="max-width: 250px;">
-                  <i class="bi {{ $isDrive ? 'bi-google text-success' : 'bi-file-earmark-check text-success' }} me-1"></i>
-                  {{ $isDrive ? 'Berkas Google Drive' : basename($prestasiMandiri->file_pengajuan_reward) }}
+                  <i class="bi {{ $isDrive ? 'bi-link-45deg text-success' : 'bi-file-earmark-check text-success' }} me-1"></i>
+                  {{ $isDrive ? 'Berkas URL / Drive' : basename($existingReward) }}
                 </span>
                 <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'reward']) }}" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem;" target="_blank">
-                  <i class="bi {{ $isDrive ? 'bi-box-arrow-up-right' : 'bi-download' }}"></i> {{ $isDrive ? 'Buka Drive' : 'Unduh' }}
+                  <i class="bi {{ $isDrive ? 'bi-box-arrow-up-right' : 'bi-download' }}"></i> {{ $isDrive ? 'Buka Link' : 'Unduh' }}
                 </a>
               </div>
             @endif
@@ -371,16 +417,28 @@
           </div>
 
           <div class="col-md-6">
-            <label for="file_surat_tugas" class="form-label fw-medium">Upload Surat Tugas dari WR III / WD I<span class="text-danger">*</span></label>
-            @if($prestasiMandiri->file_surat_tugas)
-              @php $isDrive = str_contains($prestasiMandiri->file_surat_tugas, 'drive.google.com'); @endphp
+            <label for="link_pengajuan_reward" class="form-label fw-medium">Link Surat Pengajuan Reward <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_pengajuan_reward') is-invalid @enderror" id="link_pengajuan_reward" name="link_pengajuan_reward" value="{{ old('link_pengajuan_reward', $prestasiMandiri->link_pengajuan_reward) }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan surat pengajuan reward prestasi.</small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="file_surat_tugas" class="form-label fw-medium">Upload Surat Tugas dari WR III / WD I</label>
+            @php 
+              $existingSuratTugas = $prestasiMandiri->file_surat_tugas ?: $prestasiMandiri->link_surat_tugas;
+            @endphp
+            @if($existingSuratTugas)
+              @php $isDrive = str_contains($existingSuratTugas, 'drive.google.com') || filter_var($existingSuratTugas, FILTER_VALIDATE_URL); @endphp
               <div class="mb-1 d-flex align-items-center justify-content-between p-1 px-2 bg-light rounded border">
                 <span class="small text-truncate text-secondary" style="max-width: 250px;">
-                  <i class="bi {{ $isDrive ? 'bi-google text-success' : 'bi-file-earmark-check text-success' }} me-1"></i>
-                  {{ $isDrive ? 'Berkas Google Drive' : basename($prestasiMandiri->file_surat_tugas) }}
+                  <i class="bi {{ $isDrive ? 'bi-link-45deg text-success' : 'bi-file-earmark-check text-success' }} me-1"></i>
+                  {{ $isDrive ? 'Berkas URL / Drive' : basename($existingSuratTugas) }}
                 </span>
                 <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'surat-tugas']) }}" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem;" target="_blank">
-                  <i class="bi {{ $isDrive ? 'bi-box-arrow-up-right' : 'bi-download' }}"></i> {{ $isDrive ? 'Buka Drive' : 'Unduh' }}
+                  <i class="bi {{ $isDrive ? 'bi-box-arrow-up-right' : 'bi-download' }}"></i> {{ $isDrive ? 'Buka Link' : 'Unduh' }}
                 </a>
               </div>
             @endif
@@ -389,6 +447,15 @@
               <input type="file" class="form-control @error('file_surat_tugas') is-invalid @enderror" id="file_surat_tugas" name="file_surat_tugas" accept=".pdf,.doc,.docx">
             </div>
             <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Surat Tugas WR III atau Wakil Dekan I. Format: .pdf, .docx, .doc (Maks. 20 MB). Kosongkan jika tidak ingin mengganti.</small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="link_surat_tugas" class="form-label fw-medium">Link Surat Tugas <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_surat_tugas') is-invalid @enderror" id="link_surat_tugas" name="link_surat_tugas" value="{{ old('link_surat_tugas', $prestasiMandiri->link_surat_tugas) }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan surat tugas WR III / WD I untuk SIMKATMAWA.</small>
           </div>
 
           <div class="col-12">

@@ -228,12 +228,21 @@
           </div>
 
           <div class="col-md-6">
-            <label for="file_dokumen_sertifikat" class="form-label fw-medium">Upload File Sertifikat<span class="text-danger">*</span></label>
+            <label for="file_dokumen_sertifikat" class="form-label fw-medium">Upload File Sertifikat</label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-upload"></i></span>
               <input type="file" class="form-control @error('file_dokumen_sertifikat') is-invalid @enderror" id="file_dokumen_sertifikat" name="file_dokumen_sertifikat" accept=".pdf,.jpg,.jpeg,.png">
             </div>
             <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Format: .pdf, .jpg, .jpeg, .png (Maks. 20 MB).</small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="link_dokumen_sertifikat" class="form-label fw-medium">Link Dokumen Sertifikat <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_dokumen_sertifikat') is-invalid @enderror" id="link_dokumen_sertifikat" name="link_dokumen_sertifikat" value="{{ old('link_dokumen_sertifikat', $prestasiMandiri->link_dokumen_sertifikat ?? '') }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan Google Drive / URL dokumen untuk SIMKATMAWA.</small>
           </div>
 
           <div class="col-md-6">
@@ -245,7 +254,7 @@
           </div>
 
           <div class="col-md-6">
-            <label for="file_foto_upp" class="form-label fw-medium">Upload Link Foto Upacara Penyerahan Penghargaan<span class="text-danger">*</span></label>
+            <label for="file_foto_upp" class="form-label fw-medium">Upload Foto UPP</label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-image"></i></span>
               <input type="file" class="form-control @error('file_foto_upp') is-invalid @enderror" id="file_foto_upp" name="file_foto_upp" accept=".png,.jpg,.jpeg,image/png,image/jpeg">
@@ -254,20 +263,39 @@
           </div>
 
           <div class="col-md-6">
-            <label for="link_dokumen_undangan" class="form-label fw-medium">Link Dokumen Undangan<span class="text-danger">*</span></label>
+            <label for="link_foto_upp" class="form-label fw-medium">Link Foto UPP <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_foto_upp') is-invalid @enderror" id="link_foto_upp" name="link_foto_upp" value="{{ old('link_foto_upp', $prestasiMandiri->link_foto_upp ?? '') }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan foto penerimaan penghargaan untuk SIMKATMAWA.</small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="link_dokumen_undangan" class="form-label fw-medium">Link Dokumen Undangan</label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
               <input type="url" class="form-control @error('link_dokumen_undangan') is-invalid @enderror" id="link_dokumen_undangan" name="link_dokumen_undangan" value="{{ old('link_dokumen_undangan', $prestasiMandiri->link_dokumen_undangan ?? '') }}" placeholder="URL">
             </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan dokumen undangan kegiatan / lomba.</small>
           </div>
 
           <div class="col-md-6">
-            <label for="file_dokumen_lpj" class="form-label fw-medium">Upload File LPJ<span class="text-danger">*</span></label>
+            <label for="file_dokumen_lpj" class="form-label fw-medium">Upload File LPJ</label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-upload"></i></span>
               <input type="file" class="form-control @error('file_dokumen_lpj') is-invalid @enderror" id="file_dokumen_lpj" name="file_dokumen_lpj" accept=".pdf,.doc,.docx,.zip">
             </div>
             <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Format: .pdf, .docx, .doc, .zip (Maks. 20 MB).</small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="link_dokumen_lpj" class="form-label fw-medium">Link Dokumen LPJ <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_dokumen_lpj') is-invalid @enderror" id="link_dokumen_lpj" name="link_dokumen_lpj" value="{{ old('link_dokumen_lpj', $prestasiMandiri->link_dokumen_lpj ?? '') }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan dokumen LPJ kegiatan.</small>
           </div>
 
           <div class="col-md-6">
@@ -280,7 +308,7 @@
           </div>
 
           <div class="col-md-6">
-            <label for="file_ktm" class="form-label fw-medium">Upload KTM (Kartu Tanda Mahasiswa)<span class="text-danger">*</span></label>
+            <label for="file_ktm" class="form-label fw-medium">Upload KTM (Kartu Tanda Mahasiswa)</label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-person-badge"></i></span>
               <input type="file" class="form-control @error('file_ktm') is-invalid @enderror" id="file_ktm" name="file_ktm" accept=".pdf,.jpg,.jpeg,.png">
@@ -289,7 +317,16 @@
           </div>
 
           <div class="col-md-6">
-            <label for="file_pengajuan_reward" class="form-label fw-medium">Upload Surat Pengajuan Reward Prestasi<span class="text-danger">*</span></label>
+            <label for="link_ktm" class="form-label fw-medium">Link KTM <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_ktm') is-invalid @enderror" id="link_ktm" name="link_ktm" value="{{ old('link_ktm', $prestasiMandiri->link_ktm ?? '') }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan berkas KTM mahasiswa.</small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="file_pengajuan_reward" class="form-label fw-medium">Upload Surat Pengajuan Reward</label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-file-earmark-arrow-up"></i></span>
               <input type="file" class="form-control @error('file_pengajuan_reward') is-invalid @enderror" id="file_pengajuan_reward" name="file_pengajuan_reward" accept=".pdf,.doc,.docx">
@@ -298,12 +335,30 @@
           </div>
 
           <div class="col-md-6">
-            <label for="file_surat_tugas" class="form-label fw-medium">Upload Surat Tugas dari WR III / WD I<span class="text-danger">*</span></label>
+            <label for="link_pengajuan_reward" class="form-label fw-medium">Link Surat Pengajuan Reward <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_pengajuan_reward') is-invalid @enderror" id="link_pengajuan_reward" name="link_pengajuan_reward" value="{{ old('link_pengajuan_reward', $prestasiMandiri->link_pengajuan_reward ?? '') }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan surat pengajuan reward prestasi.</small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="file_surat_tugas" class="form-label fw-medium">Upload Surat Tugas dari WR III / WD I</label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-file-earmark-check"></i></span>
               <input type="file" class="form-control @error('file_surat_tugas') is-invalid @enderror" id="file_surat_tugas" name="file_surat_tugas" accept=".pdf,.doc,.docx">
             </div>
-            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Surat Tugas WR III atau Wakil Dekan I. Format: .pdf, .docx, .doc (Maks. 20 MB).</small>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Format: .pdf, .docx, .doc (Maks. 20 MB).</small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="link_surat_tugas" class="form-label fw-medium">Link Surat Tugas <span class="text-muted fw-normal">(URL)</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" class="form-control @error('link_surat_tugas') is-invalid @enderror" id="link_surat_tugas" name="link_surat_tugas" value="{{ old('link_surat_tugas', $prestasiMandiri->link_surat_tugas ?? '') }}" placeholder="https://...">
+            </div>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan surat tugas WR III / WD I.</small>
           </div>
 
           <div class="col-12">
