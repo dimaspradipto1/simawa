@@ -231,7 +231,7 @@ class GoogleDriveUploadTest extends TestCase
 
         // Test download / view redirect
         $dlResponse = $this->actingAs($user)->get(route('prestasi-mandiri.download-file', [$record->id, 'foto-upp']));
-        $this->assertTrue(in_array($dlResponse->status(), [200, 302]));
+        $this->assertTrue(in_array($dlResponse->getStatusCode(), [200, 302]));
 
         $record->delete();
     }
