@@ -21,22 +21,28 @@
         <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1">
           Tambah Prestasi
         </span>
-        @if(!empty($isDriveReady) && $isDriveReady)
+        @if(!empty($isDriveActive) && $isDriveActive)
           <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1">
             <i class="bi bi-google me-1"></i> Penyimpanan Google Drive Aktif
           </span>
           @if(auth()->check() && in_array(auth()->user()->role, ['superadmin', 'adminbkak']))
-            <a href="{{ route('google-drive.auth') }}" class="btn btn-sm btn-primary py-0 px-2 fw-medium" style="font-size: 0.75rem;">
-              <i class="bi bi-google me-1"></i> Hubungkan Ulang Google Drive
+            <a href="{{ route('google-drive.auth') }}" class="btn btn-sm btn-outline-primary py-0 px-2 fw-medium" style="font-size: 0.75rem;">
+              <i class="bi bi-arrow-repeat me-1"></i> Otorisasi Ulang
             </a>
+            <form action="{{ route('google-drive.sync-local') }}" method="POST" class="d-inline">
+              @csrf
+              <button type="submit" class="btn btn-sm btn-success py-0 px-2 fw-medium" style="font-size: 0.75rem;" title="Unggah berkas lokal yang belum ada di Google Drive">
+                <i class="bi bi-cloud-arrow-up me-1"></i> Sinkronkan Berkas Lokal ke Drive
+              </button>
+            </form>
           @endif
         @else
-          <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-1">
-            <i class="bi bi-exclamation-circle me-1"></i> Google Drive Belum Terhubung (Penyimpanan Lokal Aktif)
+          <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1">
+            <i class="bi bi-exclamation-triangle me-1"></i> Google Drive Belum Terhubung / Token Kedaluwarsa (Penyimpanan Lokal Aktif)
           </span>
           @if(auth()->check() && in_array(auth()->user()->role, ['superadmin', 'adminbkak']))
-            <a href="{{ route('google-drive.auth') }}" class="btn btn-sm btn-primary py-0 px-2 fw-medium" style="font-size: 0.75rem;">
-              <i class="bi bi-google me-1"></i> Hubungkan Google Drive
+            <a href="{{ route('google-drive.auth') }}" class="btn btn-sm btn-danger py-0 px-2 fw-medium" style="font-size: 0.75rem;">
+              <i class="bi bi-google me-1"></i> Hubungkan Ulang Google Drive
             </a>
           @endif
         @endif

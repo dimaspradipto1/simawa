@@ -95,5 +95,6 @@ Route::middleware(['auth', 'checkrole'])->group(function () {
 
     // Google Drive Integration Routes
     Route::get('/google-drive/auth', [GoogleDriveAuthController::class, 'connect'])->name('google-drive.auth');
+    Route::post('/google-drive/sync-local', [GoogleDriveAuthController::class, 'syncLocal'])->name('google-drive.sync-local');
     Route::get('/google-drive/status', [GoogleDriveAuthController::class, 'status'])->name('google-drive.status');
 });

@@ -120,7 +120,8 @@ class PrestasiMandiriController extends Controller
         $activeTemplateLpj = TemplateLpj::getActiveTemplate('Prestasi Mandiri');
         $activeTemplatesLpj = TemplateLpj::getActiveTemplates('Prestasi Mandiri');
         $isDriveReady = $this->driveService->isConfigured();
-        return view('pages.prestasi-mandiri.create', compact('options', 'prestasiMandiri', 'activeTemplateLpj', 'activeTemplatesLpj', 'isDriveReady'));
+        $isDriveActive = $isDriveReady && $this->driveService->isTokenValid();
+        return view('pages.prestasi-mandiri.create', compact('options', 'prestasiMandiri', 'activeTemplateLpj', 'activeTemplatesLpj', 'isDriveReady', 'isDriveActive'));
     }
 
     /**
@@ -290,7 +291,8 @@ class PrestasiMandiriController extends Controller
         $activeTemplateLpj = TemplateLpj::getActiveTemplate('Prestasi Mandiri');
         $activeTemplatesLpj = TemplateLpj::getActiveTemplates('Prestasi Mandiri');
         $isDriveReady = $this->driveService->isConfigured();
-        return view('pages.prestasi-mandiri.edit', compact('options', 'prestasiMandiri', 'activeTemplateLpj', 'activeTemplatesLpj', 'isDriveReady'));
+        $isDriveActive = $isDriveReady && $this->driveService->isTokenValid();
+        return view('pages.prestasi-mandiri.edit', compact('options', 'prestasiMandiri', 'activeTemplateLpj', 'activeTemplatesLpj', 'isDriveReady', 'isDriveActive'));
     }
 
     /**

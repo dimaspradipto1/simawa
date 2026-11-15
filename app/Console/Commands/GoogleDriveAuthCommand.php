@@ -153,26 +153,36 @@ class GoogleDriveAuthCommand extends Command
                     : 'admin';
 
                 $fileMap = [
-                    'file_dokumen_sertifikat' => 'GOOGLE_DRIVE_UPLOAD_FILE_SERTIFIKAT',
-                    'file_dokumen_lpj'        => 'GOOGLE_DRIVE_UPLOAD_FILE_LPJ',
-                    'file_ktm'                => 'GOOGLE_DRIVE_UPLOAD_KTM',
-                    'file_pengajuan_reward'   => 'GOOGLE_DRIVE_UPLOAD_SURAT_PENGAJUAN_REWARD_PRESTASI',
-                    'file_surat_tugas'        => 'GOOGLE_DRIVE_UPLOAD_SURAT_WRIII_ATAU_WDI',
-                    'file_foto_upp'           => 'GOOGLE_DRIVE_UPLOAD_FOTO_UPP',
-                    'link_foto_upp'           => 'GOOGLE_DRIVE_UPLOAD_FOTO_UPP',
+                    'file_dokumen_sertifikat' => ['key' => 'GOOGLE_DRIVE_UPLOAD_FILE_SERTIFIKAT', 'link' => 'link_dokumen_sertifikat'],
+                    'file_dokumen_lpj'        => ['key' => 'GOOGLE_DRIVE_UPLOAD_FILE_LPJ', 'link' => 'link_dokumen_lpj'],
+                    'file_ktm'                => ['key' => 'GOOGLE_DRIVE_UPLOAD_KTM', 'link' => 'link_ktm'],
+                    'file_pengajuan_reward'   => ['key' => 'GOOGLE_DRIVE_UPLOAD_SURAT_PENGAJUAN_REWARD_PRESTASI', 'link' => 'link_pengajuan_reward'],
+                    'file_surat_tugas'        => ['key' => 'GOOGLE_DRIVE_UPLOAD_SURAT_WRIII_ATAU_WDI', 'link' => 'link_surat_tugas'],
+                    'file_foto_upp'           => ['key' => 'GOOGLE_DRIVE_UPLOAD_FOTO_UPP', 'link' => 'link_foto_upp'],
                 ];
 
-                foreach ($fileMap as $field => $envKey) {
+                foreach ($fileMap as $field => $cfg) {
                     $val = $record->{$field};
-                    if (!empty($val) && !str_starts_with($val, 'http')) {
+                    if (!empty($val) && !str_starts_with($val, 'https://drive.google.com')) {
+                        if (str_contains($val, '/storage/')) {
+                            $val = explode('/storage/', $val)[1] ?? $val;
+                        }
+
                         $this->line("Mengunggah {$field}: {$val}...");
-                        $res = $driveService->upload($val, $envKey, dirname($val), $ownerName);
-                        if ($res['drive']) {
-                            $record->{$field} = $res['url'];
-                            $updated = true;
-                            $this->info(" -> Berhasil diunggah ke Google Drive: {$res['url']}");
-                        } else {
-                            $this->warn(" -> Gagal diunggah ke Google Drive, tetap menggunakan berkas lokal.");
+                        try {
+                            $res = $driveService->upload($val, $cfg['key'], dirname($val), $ownerName);
+                            if ($res['drive']) {
+                                $record->{$field} = $res['url'];
+                                if (!empty($cfg['link']) && (empty($record->{$cfg['link']}) || !str_starts_with($record->{$cfg['link']}, 'https://drive.google.com'))) {
+                                    $record->{$cfg['link']} = $res['url'];
+                                }
+                                $updated = true;
+                                $this->info(" -> Berhasil diunggah ke Google Drive: {$res['url']}");
+                            } else {
+                                $this->warn(" -> Gagal diunggah ke Google Drive, tetap menggunakan berkas lokal.");
+                            }
+                        } catch (Throwable $uploadErr) {
+                            $this->warn(" -> Melewati berkas karena terjadi error: " . $uploadErr->getMessage());
                         }
                     }
                 }

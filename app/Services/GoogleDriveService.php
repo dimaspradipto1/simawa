@@ -37,6 +37,42 @@ class GoogleDriveService
     }
 
     /**
+     * Check if Google Drive token is valid and active.
+     */
+    public function isTokenValid(bool $forceRefresh = false): bool
+    {
+        if (!$this->isConfigured()) {
+            return false;
+        }
+
+        if ($forceRefresh) {
+            \Illuminate\Support\Facades\Cache::forget('google_drive_token_valid');
+        }
+
+        return \Illuminate\Support\Facades\Cache::remember('google_drive_token_valid', 300, function () {
+            try {
+                $client = $this->getClient();
+                if ($client->isAccessTokenExpired()) {
+                    $refreshToken = env('GOOGLE_DRIVE_REFRESH_TOKEN');
+                    if (empty($refreshToken) || $refreshToken === 'xxx') {
+                        return false;
+                    }
+                    $token = $client->fetchAccessTokenWithRefreshToken($refreshToken);
+                    if (isset($token['error'])) {
+                        return false;
+                    }
+                    if (!empty($token['access_token'])) {
+                        static::updateEnvKey('GOOGLE_DRIVE_ACCESS_TOKEN', $token['access_token']);
+                    }
+                }
+                return true;
+            } catch (\Throwable $e) {
+                return false;
+            }
+        });
+    }
+
+    /**
      * Resolve a relative or absolute local file path across known Laravel disks.
      */
     public function resolveLocalFilePath(string $path): ?string
@@ -447,6 +483,7 @@ class GoogleDriveService
         }
 
         file_put_contents($envPath, $content);
+        \Illuminate\Support\Facades\Cache::forget('google_drive_token_valid');
     }
 }
 

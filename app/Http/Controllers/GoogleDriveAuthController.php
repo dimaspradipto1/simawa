@@ -121,5 +121,72 @@ class GoogleDriveAuthController extends Controller
             'folders' => $folders,
         ]);
     }
+
+    /**
+     * Synchronize existing local prestasi mandiri files to Google Drive.
+     */
+    public function syncLocal(Request $request)
+    {
+        if (!auth()->check() || !in_array(auth()->user()->role, ['superadmin', 'adminbkak'])) {
+            abort(403, 'Akses khusus administrator.');
+        }
+
+        if (!$this->driveService->isConfigured()) {
+            Alert::error('Google Drive Belum Siap', 'Google Drive belum terhubung atau konfigurasi di .env belum lengkap.');
+            return redirect()->back();
+        }
+
+        $records = \App\Models\PrestasiMandiri::all();
+        $syncedFilesCount = 0;
+        $updatedRecordsCount = 0;
+
+        $fileMap = [
+            'file_dokumen_sertifikat' => ['key' => 'GOOGLE_DRIVE_UPLOAD_FILE_SERTIFIKAT', 'subdir' => 'sertifikat', 'link' => 'link_dokumen_sertifikat'],
+            'file_dokumen_lpj'        => ['key' => 'GOOGLE_DRIVE_UPLOAD_FILE_LPJ', 'subdir' => 'dokumen_lpj', 'link' => 'link_dokumen_lpj'],
+            'file_ktm'                => ['key' => 'GOOGLE_DRIVE_UPLOAD_KTM', 'subdir' => 'ktm', 'link' => 'link_ktm'],
+            'file_pengajuan_reward'   => ['key' => 'GOOGLE_DRIVE_UPLOAD_SURAT_PENGAJUAN_REWARD_PRESTASI', 'subdir' => 'surat_reward', 'link' => 'link_pengajuan_reward'],
+            'file_surat_tugas'        => ['key' => 'GOOGLE_DRIVE_UPLOAD_SURAT_WRIII_ATAU_WDI', 'subdir' => 'surat_tugas', 'link' => 'link_surat_tugas'],
+            'file_foto_upp'           => ['key' => 'GOOGLE_DRIVE_UPLOAD_FOTO_UPP', 'subdir' => 'foto_upp', 'link' => 'link_foto_upp'],
+        ];
+
+        foreach ($records as $record) {
+            $updated = false;
+            $ownerName = !empty($record->data_mahasiswa[0]['nama']) ? $record->data_mahasiswa[0]['nama'] : 'admin';
+
+            foreach ($fileMap as $field => $cfg) {
+                $val = $record->{$field};
+                // Jika berupa path lokal (bukan link http/https drive)
+                if (!empty($val) && !str_starts_with($val, 'https://drive.google.com')) {
+                    // Cek jika val adalah full URL lokal seperti https://simawa.../storage/xxx
+                    if (str_contains($val, '/storage/')) {
+                        $val = explode('/storage/', $val)[1] ?? $val;
+                    }
+
+                    $res = $this->driveService->upload($val, $cfg['key'], $cfg['subdir'], $ownerName);
+                    if ($res['drive']) {
+                        $record->{$field} = $res['url'];
+                        if (!empty($cfg['link']) && (empty($record->{$cfg['link']}) || !str_starts_with($record->{$cfg['link']}, 'https://drive.google.com'))) {
+                            $record->{$cfg['link']} = $res['url'];
+                        }
+                        $updated = true;
+                        $syncedFilesCount++;
+                    }
+                }
+            }
+
+            if ($updated) {
+                $record->save();
+                $updatedRecordsCount++;
+            }
+        }
+
+        if ($syncedFilesCount > 0) {
+            Alert::success('Sinkronisasi Berhasil', "Sebanyak {$syncedFilesCount} file pada {$updatedRecordsCount} data prestasi berhasil diunggah ke Google Drive!");
+        } else {
+            Alert::info('Tidak Ada File Baru', 'Seluruh berkas lokal sudah sinkron ke Google Drive.');
+        }
+
+        return redirect()->back();
+    }
 }
 
