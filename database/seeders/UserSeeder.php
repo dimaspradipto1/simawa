@@ -18,14 +18,14 @@ class UserSeeder extends Seeder
             [
                 'name'      => 'Super Admin SIMAWA',
                 'email'     => 'superadmin@uis.ac.id',
-                'password'  => Hash::make('password'),
+                'password'  => Hash::make('adminuisbatam'),
                 'role'      => 'superadmin',
                 'is_active' => true,
             ],
             [
                 'name'      => 'System Administrator',
                 'email'     => 'admin@uis.ac.id',
-                'password'  => Hash::make('password'),
+                'password'  => Hash::make('adminuisbatam'),
                 'role'      => 'superadmin',
                 'is_active' => true,
             ],
