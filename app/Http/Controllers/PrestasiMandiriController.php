@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\PrestasiMandiriDataTable;
+use App\Http\Requests\PrestasiMandiriRequest;
 use App\Models\PrestasiMandiri;
 use App\Models\TemplateLpj;
 use App\Services\GoogleDriveService;
@@ -125,56 +126,9 @@ class PrestasiMandiriController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PrestasiMandiriRequest $request)
     {
-        $validated = $request->validate([
-            'level'                   => ['required', 'string'],
-            'kategori'                => ['required', 'string'],
-            'nama_kompetisi'          => ['required', 'string', 'max:255'],
-            'nama_cabang'             => ['required', 'string', 'max:255'],
-            'peringkat'               => ['required', 'string'],
-            'nama_penyelenggara'      => ['required', 'string', 'max:255'],
-            'jumlah_pt_peserta'       => ['nullable', 'integer', 'min:1'],
-            'kepesertaan'             => ['required', 'string'],
-            'bentuk'                  => ['required', 'string'],
-            'url_kompetisi'           => ['nullable', 'url', 'max:255'],
-            'link_dokumen_sertifikat' => ['nullable', 'string', 'max:255'],
-            'file_dokumen_sertifikat' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:20480'],
-            'tanggal_sertifikat'      => ['nullable', 'date'],
-            'link_foto_upp'           => ['nullable', 'string', 'max:255'],
-            'file_foto_upp'           => ['nullable', 'file', 'mimes:png,jpg,jpeg', 'max:10240'],
-            'link_dokumen_undangan'   => ['nullable', 'url', 'max:255'],
-            'link_dokumen_lpj'        => ['nullable', 'url', 'max:255'],
-            'file_dokumen_lpj'        => ['nullable', 'file', 'mimes:pdf,doc,docx,zip', 'max:20480'],
-            'no_hp'                   => ['nullable', 'string', 'max:30'],
-            'file_pengajuan_reward'   => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
-            'link_pengajuan_reward'   => ['nullable', 'string', 'max:255'],
-            'file_ktm'                => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
-            'link_ktm'                => ['nullable', 'string', 'max:255'],
-            'file_surat_tugas'        => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
-            'link_surat_tugas'        => ['nullable', 'string', 'max:255'],
-            'keterangan'              => ['nullable', 'string'],
-            'data_mahasiswa'          => ['nullable', 'array'],
-            'data_mahasiswa.*.nim'    => ['nullable', 'string'],
-            'data_mahasiswa.*.nama'   => ['nullable', 'string'],
-            'data_dosen'              => ['nullable', 'array'],
-            'data_dosen.*.nidn'       => ['nullable', 'string'],
-            'data_dosen.*.nama'       => ['nullable', 'string'],
-            'data_dosen.*.url_surat'  => ['nullable', 'string'],
-        ], [
-            'level.required'            => 'Kolom Level wajib dipilih.',
-            'kategori.required'         => 'Kolom Kategori wajib dipilih.',
-            'nama_kompetisi.required'   => 'Kolom Nama Kompetisi / Lomba wajib diisi.',
-            'nama_cabang.required'      => 'Kolom Nama Cabang wajib diisi.',
-            'peringkat.required'        => 'Kolom Peringkat wajib dipilih.',
-            'nama_penyelenggara.required' => 'Kolom Nama Penyelenggara wajib diisi.',
-            'kepesertaan.required'      => 'Kolom Kepesertaan wajib dipilih.',
-            'bentuk.required'           => 'Kolom Bentuk wajib dipilih.',
-            'file_dokumen_lpj.mimes'    => 'Format file LPJ harus berupa .pdf, .doc, .docx, atau .zip.',
-            'file_dokumen_lpj.max'      => 'Ukuran file LPJ maksimal 20 MB.',
-            'file_foto_upp.mimes'       => 'Format file Foto Upacara Penyerahan Penghargaan harus berupa .png, .jpg, atau .jpeg.',
-            'file_foto_upp.max'         => 'Ukuran file Foto Upacara Penyerahan Penghargaan maksimal 10 MB.',
-        ]);
+        $validated = $request->validated();
 
         $mahasiswa = array_values(array_filter($request->input('data_mahasiswa', []), function ($item) {
             return !empty($item['nim']) || !empty($item['nama']);
@@ -342,53 +296,11 @@ class PrestasiMandiriController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PrestasiMandiri $prestasiMandiri)
+    public function update(PrestasiMandiriRequest $request, PrestasiMandiri $prestasiMandiri)
     {
         $this->authorizeStudentAccess($prestasiMandiri);
 
-        $validated = $request->validate([
-            'level'                   => ['required', 'string'],
-            'kategori'                => ['required', 'string'],
-            'nama_kompetisi'          => ['required', 'string', 'max:255'],
-            'nama_cabang'             => ['required', 'string', 'max:255'],
-            'peringkat'               => ['required', 'string'],
-            'nama_penyelenggara'      => ['required', 'string', 'max:255'],
-            'jumlah_pt_peserta'       => ['nullable', 'integer', 'min:1'],
-            'kepesertaan'             => ['required', 'string'],
-            'bentuk'                  => ['required', 'string'],
-            'url_kompetisi'           => ['nullable', 'url', 'max:255'],
-            'link_dokumen_sertifikat' => ['nullable', 'string', 'max:255'],
-            'file_dokumen_sertifikat' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:20480'],
-            'tanggal_sertifikat'      => ['nullable', 'date'],
-            'link_foto_upp'           => ['nullable', 'string', 'max:255'],
-            'file_foto_upp'           => ['nullable', 'file', 'mimes:png,jpg,jpeg', 'max:10240'],
-            'link_dokumen_undangan'   => ['nullable', 'url', 'max:255'],
-            'link_dokumen_lpj'        => ['nullable', 'url', 'max:255'],
-            'file_dokumen_lpj'        => ['nullable', 'file', 'mimes:pdf,doc,docx,zip', 'max:20480'],
-            'no_hp'                   => ['nullable', 'string', 'max:30'],
-            'file_pengajuan_reward'   => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
-            'link_pengajuan_reward'   => ['nullable', 'string', 'max:255'],
-            'file_ktm'                => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
-            'link_ktm'                => ['nullable', 'string', 'max:255'],
-            'file_surat_tugas'        => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
-            'link_surat_tugas'        => ['nullable', 'string', 'max:255'],
-            'keterangan'              => ['nullable', 'string'],
-            'data_mahasiswa'          => ['nullable', 'array'],
-            'data_dosen'              => ['nullable', 'array'],
-        ], [
-            'level.required'            => 'Kolom Level wajib dipilih.',
-            'kategori.required'         => 'Kolom Kategori wajib dipilih.',
-            'nama_kompetisi.required'   => 'Kolom Nama Kompetisi / Lomba wajib diisi.',
-            'nama_cabang.required'      => 'Kolom Nama Cabang wajib diisi.',
-            'peringkat.required'        => 'Kolom Peringkat wajib dipilih.',
-            'nama_penyelenggara.required' => 'Kolom Nama Penyelenggara wajib diisi.',
-            'kepesertaan.required'      => 'Kolom Kepesertaan wajib dipilih.',
-            'bentuk.required'           => 'Kolom Bentuk wajib dipilih.',
-            'file_dokumen_lpj.mimes'    => 'Format file LPJ harus berupa .pdf, .doc, .docx, atau .zip.',
-            'file_dokumen_lpj.max'      => 'Ukuran file LPJ maksimal 20 MB.',
-            'file_foto_upp.mimes'       => 'Format file Foto Upacara Penyerahan Penghargaan harus berupa .png, .jpg, atau .jpeg.',
-            'file_foto_upp.max'         => 'Ukuran file Foto Upacara Penyerahan Penghargaan maksimal 10 MB.',
-        ]);
+        $validated = $request->validated();
 
         $mahasiswa = array_values(array_filter($request->input('data_mahasiswa', []), function ($item) {
             return !empty($item['nim']) || !empty($item['nama']);

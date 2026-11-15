@@ -108,32 +108,7 @@
     </div>
   </div>
 
-  @if ($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-      <h6 class="fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i> Terdapat kesalahan input data:</h6>
-      <ul class="mb-0 small">
-        @foreach ($errors->all() as $error)
-          <li>{{ $error }}</li>
-        @endforeach
-      </ul>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  @endif
 
-  <!-- Warning Banner: Petunjuk Kolom Wajib Diisi -->
-  <div class="alert alert-warning border-0 shadow-sm d-flex align-items-start mb-4 p-3 rounded-3" role="alert" style="background-color: #fffbeb; border-left: 5px solid #f59e0b !important;">
-    <div class="me-3 p-2 rounded-circle bg-warning bg-opacity-25 text-warning-emphasis d-flex align-items-center justify-content-center flex-shrink-0" style="width: 42px; height: 42px;">
-      <i class="bi bi-exclamation-triangle-fill fs-5 text-warning"></i>
-    </div>
-    <div class="flex-grow-1">
-      <h6 class="fw-bold mb-1 text-dark d-flex align-items-center">
-        <span>Perhatian: Kolom Bertanda Bintang Merah (<span class="text-danger fw-bold">*</span>) Wajib Diisi</span>
-      </h6>
-      <p class="small text-secondary mb-0">
-        Mohon pastikan seluruh kolom dengan tanda bintang merah (<strong>*</strong>) seperti <strong>Level, Kategori, Nama Kompetisi, Cabang, Peringkat, Penyelenggara, Kontak HP, Tanggal Sertifikat</strong>, serta <strong>minimal satu Data Mahasiswa</strong> telah diisi sebelum menekan tombol Simpan Data.
-      </p>
-    </div>
-  </div>
 
   <form action="{{ route('prestasi-mandiri.store') }}" method="POST" enctype="multipart/form-data" id="form-prestasi-mandiri" novalidate>
     @csrf
@@ -726,58 +701,26 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
 
-      // Jika ada kolom wajib yang kosong: Tampilkan Warning Popup & Focus
+      // Jika ada kolom wajib yang kosong: Tampilkan warning di setiap field & scroll ke field pertama
       if (missingFields.length > 0) {
         e.preventDefault();
         e.stopPropagation();
 
-        const listItemsHtml = missingFields.map(field => `
-          <li class="d-flex align-items-center mb-1">
-            <i class="bi bi-x-circle-fill text-danger me-2"></i>
-            <span class="text-dark fw-medium">${field}</span>
-          </li>
-        `).join('');
-
-        if (typeof Swal !== 'undefined') {
-          Swal.fire({
-            icon: 'warning',
-            title: '<h5 class="fw-bold mb-0 text-dark">Kolom Wajib Belum Diisi!</h5>',
-            html: `
-              <div class="text-start mt-2">
-                <p class="small text-secondary mb-2">Terdapat <b>${missingFields.length} kolom wajib</b> bertanda (<span class="text-danger fw-bold">*</span>) yang belum lengkap:</p>
-                <div class="p-3 rounded bg-light border" style="max-height: 200px; overflow-y: auto;">
-                  <ul class="list-unstyled mb-0 small">
-                    ${listItemsHtml}
-                  </ul>
-                </div>
-                <div class="alert alert-warning py-2 px-3 small mt-2 mb-0 border-0 bg-warning bg-opacity-10 text-warning-emphasis">
-                  <i class="bi bi-info-circle me-1"></i> Kolom yang belum diisi telah ditandai dengan garis batas merah.
-                </div>
-              </div>
-            `,
-            confirmButtonText: '<i class="bi bi-pencil-square me-1"></i> Lengkapi Kolom Sekarang',
-            confirmButtonColor: '#0f172a',
-            customClass: {
-              confirmButton: 'btn btn-dark px-4 py-2 rounded-pill shadow-sm'
-            },
-            buttonsStyling: false
-          }).then(() => {
-            if (firstInvalidEl) {
-              firstInvalidEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              setTimeout(() => firstInvalidEl.focus(), 300);
-            }
-          });
-        } else {
-          alert('Peringatan: Mohon lengkapi seluruh kolom wajib (*):\n- ' + missingFields.join('\n- '));
-          if (firstInvalidEl) {
-            firstInvalidEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            firstInvalidEl.focus();
-          }
+        if (firstInvalidEl) {
+          firstInvalidEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => firstInvalidEl.focus(), 200);
         }
 
         return false;
       }
     });
+
+    // Fokus ke field pertama yang error jika ada validasi dari server (Form Request)
+    const firstServerError = formPrestasi.querySelector('.is-invalid');
+    if (firstServerError) {
+      firstServerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => firstServerError.focus(), 200);
+    }
 
     // Otomatis hilangkan border merah saat pengguna mengetik/memilih
     formPrestasi.addEventListener('input', function (e) {
