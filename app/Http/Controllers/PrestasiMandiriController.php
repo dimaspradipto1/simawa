@@ -171,8 +171,8 @@ class PrestasiMandiriController extends Controller
             'bentuk.required'           => 'Kolom Bentuk wajib dipilih.',
             'file_dokumen_lpj.mimes'    => 'Format file LPJ harus berupa .pdf, .doc, .docx, atau .zip.',
             'file_dokumen_lpj.max'      => 'Ukuran file LPJ maksimal 20 MB.',
-            'file_foto_upp.mimes'       => 'Format file Foto UPP harus berupa .png, .jpg, atau .jpeg.',
-            'file_foto_upp.max'         => 'Ukuran file Foto UPP maksimal 10 MB.',
+            'file_foto_upp.mimes'       => 'Format file Foto Upacara Penyerahan Penghargaan harus berupa .png, .jpg, atau .jpeg.',
+            'file_foto_upp.max'         => 'Ukuran file Foto Upacara Penyerahan Penghargaan maksimal 10 MB.',
         ]);
 
         $mahasiswa = array_values(array_filter($request->input('data_mahasiswa', []), function ($item) {
@@ -381,8 +381,8 @@ class PrestasiMandiriController extends Controller
             'bentuk.required'           => 'Kolom Bentuk wajib dipilih.',
             'file_dokumen_lpj.mimes'    => 'Format file LPJ harus berupa .pdf, .doc, .docx, atau .zip.',
             'file_dokumen_lpj.max'      => 'Ukuran file LPJ maksimal 20 MB.',
-            'file_foto_upp.mimes'       => 'Format file Foto UPP harus berupa .png, .jpg, atau .jpeg.',
-            'file_foto_upp.max'         => 'Ukuran file Foto UPP maksimal 10 MB.',
+            'file_foto_upp.mimes'       => 'Format file Foto Upacara Penyerahan Penghargaan harus berupa .png, .jpg, atau .jpeg.',
+            'file_foto_upp.max'         => 'Ukuran file Foto Upacara Penyerahan Penghargaan maksimal 10 MB.',
         ]);
 
         $mahasiswa = array_values(array_filter($request->input('data_mahasiswa', []), function ($item) {

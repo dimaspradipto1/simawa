@@ -134,9 +134,9 @@
                     </div>
                 </div>
 
-                <!-- Foto UPP & Link Dokumen Undangan -->
+                <!-- Foto Upacara Penyerahan Penghargaan & Link Dokumen Undangan -->
                 <div class="col-md-6">
-                    <label class="form-label small fw-bold text-dark mb-1">Foto UPP (Upacara Penyerahan Penghargaan)</label>
+                    <label class="form-label small fw-bold text-dark mb-1">Foto Upacara Penyerahan Penghargaan</label>
                     <div class="p-2 rounded bg-light border text-dark small text-break">
                         @php 
                             $uppFile = $prestasiMandiri->file_foto_upp ?: $prestasiMandiri->link_foto_upp;
@@ -146,14 +146,14 @@
                         @if($uppUrl)
                             <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
                                 <a href="{{ route('prestasi-mandiri.download-file', [$prestasiMandiri->id, 'foto-upp']) }}" class="btn btn-sm btn-outline-success py-1 px-3 d-inline-flex align-items-center" target="_blank">
-                                    <i class="bi {{ $isDrive ? 'bi-google' : 'bi-image' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Lihat Foto UPP' }}
+                                    <i class="bi {{ $isDrive ? 'bi-google' : 'bi-image' }} me-1"></i> {{ $isDrive ? 'Buka di Google Drive' : 'Lihat Foto Upacara Penyerahan Penghargaan' }}
                                 </a>
                                 <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 d-inline-flex align-items-center copy-url-btn" data-url="{{ $uppUrl }}" title="Salin Link URL">
                                     <i class="bi bi-clipboard me-1"></i> <span>Salin URL</span>
                                 </button>
                             </div>
                             <div class="mt-1 pt-1 border-top">
-                                <span class="text-muted d-block small" style="font-size: 0.72rem;"><i class="bi bi-link-45deg"></i> Link URL Foto UPP (SIMKATMAWA):</span>
+                                <span class="text-muted d-block small" style="font-size: 0.72rem;"><i class="bi bi-link-45deg"></i> Link URL Foto Upacara Penyerahan Penghargaan (SIMKATMAWA):</span>
                                 <a href="{{ $uppUrl }}" target="_blank" class="text-primary text-break fw-medium" style="font-size: 0.8rem;">{{ $uppUrl }}</a>
                             </div>
                         @else

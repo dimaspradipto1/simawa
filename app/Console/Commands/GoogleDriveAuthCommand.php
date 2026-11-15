@@ -107,7 +107,7 @@ class GoogleDriveAuthCommand extends Command
                     'KTM' => env('GOOGLE_DRIVE_UPLOAD_KTM'),
                     'Surat Reward' => env('GOOGLE_DRIVE_UPLOAD_SURAT_PENGAJUAN_REWARD_PRESTASI'),
                     'Surat WR III / WD I' => env('GOOGLE_DRIVE_UPLOAD_SURAT_WRIII_ATAU_WDI'),
-                    'Foto UPP' => env('GOOGLE_DRIVE_UPLOAD_FOTO_UPP'),
+                    'Foto Upacara Penyerahan Penghargaan' => env('GOOGLE_DRIVE_UPLOAD_FOTO_UPP'),
                 ];
 
                 $tableRows = [];

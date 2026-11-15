@@ -324,7 +324,7 @@
           </div>
 
           <div class="col-md-6">
-            <label for="file_foto_upp" class="form-label fw-medium">Upload Foto UPP</label>
+            <label for="file_foto_upp" class="form-label fw-medium">Upload Foto Upacara Penyerahan Penghargaan</label>
             @php 
               $existingFotoUpp = $prestasiMandiri->file_foto_upp ?? $prestasiMandiri->link_foto_upp;
             @endphp
@@ -348,12 +348,12 @@
           </div>
 
           <div class="col-md-6">
-            <label for="link_foto_upp" class="form-label fw-medium">Link Foto UPP <span class="text-muted fw-normal">(URL)</span></label>
+            <label for="link_foto_upp" class="form-label fw-medium">Link Foto Upacara Penyerahan Penghargaan <span class="text-muted fw-normal">(URL)</span></label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
               <input type="url" class="form-control @error('link_foto_upp') is-invalid @enderror" id="link_foto_upp" name="link_foto_upp" value="{{ old('link_foto_upp', $prestasiMandiri->link_foto_upp) }}" placeholder="https://...">
             </div>
-            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan foto penerimaan penghargaan untuk SIMKATMAWA.</small>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Tautan foto upacara penyerahan penghargaan untuk SIMKATMAWA.</small>
           </div>
 
           <div class="col-md-6">
