@@ -120,7 +120,22 @@
     </div>
   @endif
 
-  <form action="{{ route('prestasi-mandiri.update', $prestasiMandiri->id) }}" method="POST" enctype="multipart/form-data">
+  <!-- Warning Banner: Petunjuk Kolom Wajib Diisi -->
+  <div class="alert alert-warning border-0 shadow-sm d-flex align-items-start mb-4 p-3 rounded-3" role="alert" style="background-color: #fffbeb; border-left: 5px solid #f59e0b !important;">
+    <div class="me-3 p-2 rounded-circle bg-warning bg-opacity-25 text-warning-emphasis d-flex align-items-center justify-content-center flex-shrink-0" style="width: 42px; height: 42px;">
+      <i class="bi bi-exclamation-triangle-fill fs-5 text-warning"></i>
+    </div>
+    <div class="flex-grow-1">
+      <h6 class="fw-bold mb-1 text-dark d-flex align-items-center">
+        <span>Perhatian: Kolom Bertanda Bintang Merah (<span class="text-danger fw-bold">*</span>) Wajib Diisi</span>
+      </h6>
+      <p class="small text-secondary mb-0">
+        Mohon pastikan seluruh kolom dengan tanda bintang merah (<strong>*</strong>) seperti <strong>Level, Kategori, Nama Kompetisi, Cabang, Peringkat, Penyelenggara, Kontak HP, Tanggal Sertifikat</strong>, serta <strong>minimal satu Data Mahasiswa</strong> telah diisi sebelum menekan tombol Perbarui Data.
+      </p>
+    </div>
+  </div>
+
+  <form action="{{ route('prestasi-mandiri.update', $prestasiMandiri->id) }}" method="POST" enctype="multipart/form-data" id="form-prestasi-mandiri" novalidate>
     @csrf
     @method('PUT')
 
@@ -146,6 +161,9 @@
                 <option value="{{ $key }}" {{ old('level', $prestasiMandiri->level) == $key ? 'selected' : '' }}>{{ $label }}</option>
               @endforeach
             </select>
+            @error('level')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-md-6">
@@ -156,6 +174,9 @@
                 <option value="{{ $key }}" {{ old('kategori', $prestasiMandiri->kategori) == $key ? 'selected' : '' }}>{{ $label }}</option>
               @endforeach
             </select>
+            @error('kategori')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-12">
@@ -164,6 +185,9 @@
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-award"></i></span>
               <input type="text" class="form-control @error('nama_kompetisi') is-invalid @enderror" id="nama_kompetisi" name="nama_kompetisi" value="{{ old('nama_kompetisi', $prestasiMandiri->nama_kompetisi) }}" placeholder="Nama Kompetisi / Lomba" required>
             </div>
+            @error('nama_kompetisi')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-md-6">
@@ -172,6 +196,9 @@
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-diagram-3"></i></span>
               <input type="text" class="form-control @error('nama_cabang') is-invalid @enderror" id="nama_cabang" name="nama_cabang" value="{{ old('nama_cabang', $prestasiMandiri->nama_cabang) }}" placeholder="Nama Cabang" required>
             </div>
+            @error('nama_cabang')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-md-6">
@@ -182,6 +209,9 @@
                 <option value="{{ $key }}" {{ old('peringkat', $prestasiMandiri->peringkat) == $key ? 'selected' : '' }}>{{ $label }}</option>
               @endforeach
             </select>
+            @error('peringkat')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-12">
@@ -190,14 +220,20 @@
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-building"></i></span>
               <input type="text" class="form-control @error('nama_penyelenggara') is-invalid @enderror" id="nama_penyelenggara" name="nama_penyelenggara" value="{{ old('nama_penyelenggara', $prestasiMandiri->nama_penyelenggara) }}" placeholder="Penyelenggara" required>
             </div>
+            @error('nama_penyelenggara')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-md-4">
             <label for="jumlah_pt_peserta" class="form-label fw-medium">Jumlah PT Peserta<span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-people"></i></span>
-              <input type="number" class="form-control @error('jumlah_pt_peserta') is-invalid @enderror" id="jumlah_pt_peserta" name="jumlah_pt_peserta" value="{{ old('jumlah_pt_peserta', $prestasiMandiri->jumlah_pt_peserta) }}" placeholder="Jumlah">
+              <input type="number" class="form-control @error('jumlah_pt_peserta') is-invalid @enderror" id="jumlah_pt_peserta" name="jumlah_pt_peserta" value="{{ old('jumlah_pt_peserta', $prestasiMandiri->jumlah_pt_peserta) }}" placeholder="Jumlah" required min="1">
             </div>
+            @error('jumlah_pt_peserta')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-md-4">
@@ -208,6 +244,9 @@
                 <option value="{{ $key }}" {{ old('kepesertaan', $prestasiMandiri->kepesertaan) == $key ? 'selected' : '' }}>{{ $label }}</option>
               @endforeach
             </select>
+            @error('kepesertaan')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-md-4">
@@ -218,18 +257,24 @@
                 <option value="{{ $key }}" {{ old('bentuk', $prestasiMandiri->bentuk) == $key ? 'selected' : '' }}>{{ $label }}</option>
               @endforeach
             </select>
+            @error('bentuk')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-12">
             <label for="url_kompetisi" class="form-label fw-medium">URL Kompetisi / Lomba<span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
-              <input type="url" class="form-control @error('url_kompetisi') is-invalid @enderror" id="url_kompetisi" name="url_kompetisi" value="{{ old('url_kompetisi', $prestasiMandiri->url_kompetisi) }}" placeholder="URL">
+              <input type="url" class="form-control @error('url_kompetisi') is-invalid @enderror" id="url_kompetisi" name="url_kompetisi" value="{{ old('url_kompetisi', $prestasiMandiri->url_kompetisi) }}" placeholder="URL" required>
             </div>
+            @error('url_kompetisi')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-md-6">
-            <label for="file_dokumen_sertifikat" class="form-label fw-medium">Upload File Sertifikat<span class="text-danger">*</span></label>
+            <label for="file_dokumen_sertifikat" class="form-label fw-medium">Upload File Sertifikat</label>
             @if($prestasiMandiri->file_dokumen_sertifikat)
               @php $isDrive = str_contains($prestasiMandiri->file_dokumen_sertifikat, 'drive.google.com'); @endphp
               <div class="mb-1 d-flex align-items-center justify-content-between p-1 px-2 bg-light rounded border">
@@ -271,8 +316,11 @@
             <label for="tanggal_sertifikat" class="form-label fw-medium">Tanggal Sertifikat<span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-calendar-event"></i></span>
-              <input type="date" class="form-control @error('tanggal_sertifikat') is-invalid @enderror" id="tanggal_sertifikat" name="tanggal_sertifikat" value="{{ old('tanggal_sertifikat', $prestasiMandiri->tanggal_sertifikat ? $prestasiMandiri->tanggal_sertifikat->format('Y-m-d') : '') }}">
+              <input type="date" class="form-control @error('tanggal_sertifikat') is-invalid @enderror" id="tanggal_sertifikat" name="tanggal_sertifikat" value="{{ old('tanggal_sertifikat', $prestasiMandiri->tanggal_sertifikat ? $prestasiMandiri->tanggal_sertifikat->format('Y-m-d') : '') }}" required>
             </div>
+            @error('tanggal_sertifikat')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-md-6">
@@ -354,9 +402,12 @@
             <label for="no_hp" class="form-label fw-medium">No. HP / WhatsApp<span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text bg-light text-secondary"><i class="bi bi-telephone"></i></span>
-              <input type="text" class="form-control @error('no_hp') is-invalid @enderror" id="no_hp" name="no_hp" value="{{ old('no_hp', $prestasiMandiri->no_hp ?? '') }}" placeholder="Contoh: 081234567890">
+              <input type="text" class="form-control @error('no_hp') is-invalid @enderror" id="no_hp" name="no_hp" value="{{ old('no_hp', $prestasiMandiri->no_hp ?? '') }}" placeholder="Contoh: 081234567890" required>
             </div>
             <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Nomor WhatsApp aktif mahasiswa.</small>
+            @error('no_hp')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="col-md-6">
@@ -646,6 +697,169 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   });
+
+  // Client-Side Validation & SweetAlert Warning for Required Fields
+  const formPrestasi = document.getElementById('form-prestasi-mandiri');
+  if (formPrestasi) {
+    formPrestasi.addEventListener('submit', function (e) {
+      const missingFields = [];
+      let firstInvalidEl = null;
+
+      // Bersihkan error lama
+      document.querySelectorAll('.client-invalid-msg').forEach(el => el.remove());
+      formPrestasi.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+      function markFieldInvalid(el, labelName) {
+        if (!el) return;
+        el.classList.add('is-invalid');
+        missingFields.push(labelName);
+        if (!firstInvalidEl) {
+          firstInvalidEl = el;
+        }
+
+        const colParent = el.closest('.col-md-6') || el.closest('.col-12') || el.closest('.col-md-4') || el.parentElement;
+        if (colParent && !colParent.querySelector('.client-invalid-msg')) {
+          const msg = document.createElement('div');
+          msg.className = 'invalid-feedback d-block client-invalid-msg text-danger small mt-1';
+          msg.innerHTML = `<i class="bi bi-exclamation-circle me-1"></i> Kolom <b>${labelName}</b> wajib diisi.`;
+          colParent.appendChild(msg);
+        }
+      }
+
+      // 1. Validasi field utama
+      const requiredInputs = [
+        { id: 'level', label: 'Level' },
+        { id: 'kategori', label: 'Kategori' },
+        { id: 'nama_kompetisi', label: 'Nama Kompetisi / Lomba' },
+        { id: 'nama_cabang', label: 'Nama Cabang' },
+        { id: 'peringkat', label: 'Peringkat' },
+        { id: 'nama_penyelenggara', label: 'Nama Penyelenggara' },
+        { id: 'jumlah_pt_peserta', label: 'Jumlah PT Peserta' },
+        { id: 'kepesertaan', label: 'Kepesertaan' },
+        { id: 'bentuk', label: 'Bentuk' },
+        { id: 'url_kompetisi', label: 'URL Kompetisi / Lomba' },
+        { id: 'tanggal_sertifikat', label: 'Tanggal Sertifikat' },
+        { id: 'no_hp', label: 'No. HP / WhatsApp' }
+      ];
+
+      requiredInputs.forEach(item => {
+        const inputEl = document.getElementById(item.id);
+        if (inputEl && (!inputEl.value || !inputEl.value.trim())) {
+          markFieldInvalid(inputEl, item.label);
+        }
+      });
+
+      // 2. Validasi Data Mahasiswa (Minimal 1 mahasiswa dengan NIM & Nama)
+      const rowsMahasiswa = document.querySelectorAll('.row-mahasiswa');
+      let validMahasiswaCount = 0;
+      rowsMahasiswa.forEach(row => {
+        const nim = row.querySelector('input[name*="[nim]"]');
+        const nama = row.querySelector('input[name*="[nama]"]');
+        if (nim && nama && nim.value.trim() && nama.value.trim()) {
+          validMahasiswaCount++;
+        }
+      });
+
+      if (validMahasiswaCount === 0) {
+        missingFields.push('Data Mahasiswa (NIM dan Nama)');
+        const mhsContainer = document.getElementById('container-mahasiswa');
+        if (mhsContainer) {
+          const firstNim = mhsContainer.querySelector('input[name*="[nim]"]');
+          const firstNama = mhsContainer.querySelector('input[name*="[nama]"]');
+          if (firstNim) firstNim.classList.add('is-invalid');
+          if (firstNama) firstNama.classList.add('is-invalid');
+          if (!firstInvalidEl) firstInvalidEl = firstNim || firstNama;
+
+          let mhsMsg = mhsContainer.parentElement.querySelector('.client-invalid-msg');
+          if (!mhsMsg) {
+            mhsMsg = document.createElement('div');
+            mhsMsg.className = 'invalid-feedback d-block client-invalid-msg text-danger small mt-2';
+            mhsMsg.innerHTML = '<i class="bi bi-exclamation-circle me-1"></i> Minimal satu data mahasiswa (NIM & Nama) wajib diisi sebelum menyimpan.';
+            mhsContainer.parentElement.appendChild(mhsMsg);
+          }
+        }
+      }
+
+      // Jika ada kolom wajib yang kosong: Tampilkan Warning Popup & Focus
+      if (missingFields.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const listItemsHtml = missingFields.map(field => `
+          <li class="d-flex align-items-center mb-1">
+            <i class="bi bi-x-circle-fill text-danger me-2"></i>
+            <span class="text-dark fw-medium">${field}</span>
+          </li>
+        `).join('');
+
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'warning',
+            title: '<h5 class="fw-bold mb-0 text-dark">Kolom Wajib Belum Diisi!</h5>',
+            html: `
+              <div class="text-start mt-2">
+                <p class="small text-secondary mb-2">Terdapat <b>${missingFields.length} kolom wajib</b> bertanda (<span class="text-danger fw-bold">*</span>) yang belum lengkap:</p>
+                <div class="p-3 rounded bg-light border" style="max-height: 200px; overflow-y: auto;">
+                  <ul class="list-unstyled mb-0 small">
+                    ${listItemsHtml}
+                  </ul>
+                </div>
+                <div class="alert alert-warning py-2 px-3 small mt-2 mb-0 border-0 bg-warning bg-opacity-10 text-warning-emphasis">
+                  <i class="bi bi-info-circle me-1"></i> Kolom yang belum diisi telah ditandai dengan garis batas merah.
+                </div>
+              </div>
+            `,
+            confirmButtonText: '<i class="bi bi-pencil-square me-1"></i> Lengkapi Kolom Sekarang',
+            confirmButtonColor: '#0f172a',
+            customClass: {
+              confirmButton: 'btn btn-dark px-4 py-2 rounded-pill shadow-sm'
+            },
+            buttonsStyling: false
+          }).then(() => {
+            if (firstInvalidEl) {
+              firstInvalidEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              setTimeout(() => firstInvalidEl.focus(), 300);
+            }
+          });
+        } else {
+          alert('Peringatan: Mohon lengkapi seluruh kolom wajib (*):\n- ' + missingFields.join('\n- '));
+          if (firstInvalidEl) {
+            firstInvalidEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstInvalidEl.focus();
+          }
+        }
+
+        return false;
+      }
+    });
+
+    // Otomatis hilangkan border merah saat pengguna mengetik/memilih
+    formPrestasi.addEventListener('input', function (e) {
+      if (e.target && e.target.classList.contains('is-invalid')) {
+        if (e.target.value.trim()) {
+          e.target.classList.remove('is-invalid');
+          const colParent = e.target.closest('.col-md-6') || e.target.closest('.col-12') || e.target.closest('.col-md-4') || e.target.parentElement;
+          if (colParent) {
+            const err = colParent.querySelector('.client-invalid-msg');
+            if (err) err.remove();
+          }
+        }
+      }
+    });
+
+    formPrestasi.addEventListener('change', function (e) {
+      if (e.target && e.target.classList.contains('is-invalid')) {
+        if (e.target.value.trim()) {
+          e.target.classList.remove('is-invalid');
+          const colParent = e.target.closest('.col-md-6') || e.target.closest('.col-12') || e.target.closest('.col-md-4') || e.target.parentElement;
+          if (colParent) {
+            const err = colParent.querySelector('.client-invalid-msg');
+            if (err) err.remove();
+          }
+        }
+      }
+    });
+  }
 });
 </script>
 @endsection

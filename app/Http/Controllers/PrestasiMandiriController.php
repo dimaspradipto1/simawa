@@ -161,12 +161,14 @@ class PrestasiMandiriController extends Controller
             'data_dosen.*.nama'       => ['nullable', 'string'],
             'data_dosen.*.url_surat'  => ['nullable', 'string'],
         ], [
-            'level.required'            => 'Level wajib dipilih.',
-            'kategori.required'         => 'Kategori wajib dipilih.',
-            'nama_kompetisi.required'   => 'Nama Kompetisi wajib diisi.',
-            'nama_cabang.required'      => 'Nama Cabang wajib diisi.',
-            'peringkat.required'        => 'Peringkat wajib dipilih.',
-            'nama_penyelenggara.required' => 'Nama Penyelenggara wajib diisi.',
+            'level.required'            => 'Kolom Level wajib dipilih.',
+            'kategori.required'         => 'Kolom Kategori wajib dipilih.',
+            'nama_kompetisi.required'   => 'Kolom Nama Kompetisi / Lomba wajib diisi.',
+            'nama_cabang.required'      => 'Kolom Nama Cabang wajib diisi.',
+            'peringkat.required'        => 'Kolom Peringkat wajib dipilih.',
+            'nama_penyelenggara.required' => 'Kolom Nama Penyelenggara wajib diisi.',
+            'kepesertaan.required'      => 'Kolom Kepesertaan wajib dipilih.',
+            'bentuk.required'           => 'Kolom Bentuk wajib dipilih.',
             'file_dokumen_lpj.mimes'    => 'Format file LPJ harus berupa .pdf, .doc, .docx, atau .zip.',
             'file_dokumen_lpj.max'      => 'Ukuran file LPJ maksimal 20 MB.',
             'file_foto_upp.mimes'       => 'Format file Foto UPP harus berupa .png, .jpg, atau .jpeg.',
@@ -197,6 +199,10 @@ class PrestasiMandiriController extends Controller
                     'prodi' => 'Teknik Informatika'
                 ];
             }
+        }
+
+        if (empty($mahasiswa)) {
+            return back()->withInput()->withErrors(['data_mahasiswa' => 'Minimal satu data mahasiswa (NIM dan Nama) wajib diisi.']);
         }
 
         $submitterName = auth()->check() ? auth()->user()->name : ($user?->name ?? (!empty($mahasiswa[0]['nama']) ? $mahasiswa[0]['nama'] : 'user'));
@@ -365,12 +371,14 @@ class PrestasiMandiriController extends Controller
             'data_mahasiswa'          => ['nullable', 'array'],
             'data_dosen'              => ['nullable', 'array'],
         ], [
-            'level.required'            => 'Level wajib dipilih.',
-            'kategori.required'         => 'Kategori wajib dipilih.',
-            'nama_kompetisi.required'   => 'Nama Kompetisi wajib diisi.',
-            'nama_cabang.required'      => 'Nama Cabang wajib diisi.',
-            'peringkat.required'        => 'Peringkat wajib dipilih.',
-            'nama_penyelenggara.required' => 'Nama Penyelenggara wajib diisi.',
+            'level.required'            => 'Kolom Level wajib dipilih.',
+            'kategori.required'         => 'Kolom Kategori wajib dipilih.',
+            'nama_kompetisi.required'   => 'Kolom Nama Kompetisi / Lomba wajib diisi.',
+            'nama_cabang.required'      => 'Kolom Nama Cabang wajib diisi.',
+            'peringkat.required'        => 'Kolom Peringkat wajib dipilih.',
+            'nama_penyelenggara.required' => 'Kolom Nama Penyelenggara wajib diisi.',
+            'kepesertaan.required'      => 'Kolom Kepesertaan wajib dipilih.',
+            'bentuk.required'           => 'Kolom Bentuk wajib dipilih.',
             'file_dokumen_lpj.mimes'    => 'Format file LPJ harus berupa .pdf, .doc, .docx, atau .zip.',
             'file_dokumen_lpj.max'      => 'Ukuran file LPJ maksimal 20 MB.',
             'file_foto_upp.mimes'       => 'Format file Foto UPP harus berupa .png, .jpg, atau .jpeg.',
@@ -401,6 +409,10 @@ class PrestasiMandiriController extends Controller
                     'prodi' => 'S1 - Teknik Informatika'
                 ];
             }
+        }
+
+        if (empty($mahasiswa)) {
+            return back()->withInput()->withErrors(['data_mahasiswa' => 'Minimal satu data mahasiswa (NIM dan Nama) wajib diisi.']);
         }
 
         $submitterName = auth()->check() ? auth()->user()->name : ($user?->name ?? (!empty($mahasiswa[0]['nama']) ? $mahasiswa[0]['nama'] : 'user'));
