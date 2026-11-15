@@ -214,8 +214,11 @@ class GoogleDriveUploadTest extends TestCase
             'nama_cabang' => 'Karate',
             'peringkat' => 'Juara I',
             'nama_penyelenggara' => 'FORKI',
+            'jumlah_pt_peserta' => 5,
             'kepesertaan' => 'Individu',
             'bentuk' => 'Luring',
+            'url_kompetisi' => 'https://example.com/karate',
+            'tanggal_sertifikat' => '2026-06-01',
             'file_foto_upp' => $fakePng,
             'no_hp' => '081234567890',
             'data_mahasiswa' => [
