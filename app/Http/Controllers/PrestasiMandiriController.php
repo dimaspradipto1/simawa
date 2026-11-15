@@ -8,6 +8,7 @@ use App\Models\TemplateLpj;
 use App\Services\GoogleDriveService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class PrestasiMandiriController extends Controller
@@ -283,7 +284,11 @@ class PrestasiMandiriController extends Controller
             ? ($request->input('status', 'Terverifikasi'))
             : 'Submitted';
 
-        PrestasiMandiri::create($validated);
+        PrestasiMandiri::ensureSchemaCompatibility();
+        $existingColumns = Schema::getColumnListing('prestasi_mandiris');
+        $dataToSave = array_intersect_key($validated, array_flip($existingColumns));
+
+        PrestasiMandiri::create($dataToSave);
 
         return redirect()->route('prestasi-mandiri.index')
             ->with('success', 'Data Prestasi Mandiri terpadu berhasil disimpan.');
@@ -528,7 +533,11 @@ class PrestasiMandiriController extends Controller
             $validated['tahun'] = Carbon::parse($validated['tanggal_sertifikat'])->year;
         }
 
-        $prestasiMandiri->update($validated);
+        PrestasiMandiri::ensureSchemaCompatibility();
+        $existingColumns = Schema::getColumnListing('prestasi_mandiris');
+        $dataToSave = array_intersect_key($validated, array_flip($existingColumns));
+
+        $prestasiMandiri->update($dataToSave);
 
         return redirect()->route('prestasi-mandiri.index')
             ->with('success', 'Data Prestasi Mandiri berhasil diperbarui.');

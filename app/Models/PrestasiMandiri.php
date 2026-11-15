@@ -11,6 +11,61 @@ class PrestasiMandiri extends Model
 
     protected $table = 'prestasi_mandiris';
 
+    protected static function booted()
+    {
+        static::ensureSchemaCompatibility();
+    }
+
+    /**
+     * Ensure all schema columns exist in the database table dynamically.
+     */
+    public static function ensureSchemaCompatibility(): void
+    {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('prestasi_mandiris')) {
+                $missingColumns = [];
+                $columnsToCheck = [
+                    'link_pengajuan_reward' => 'string',
+                    'link_ktm'              => 'string',
+                    'link_surat_tugas'      => 'string',
+                    'link_foto_upp'         => 'string',
+                    'file_foto_upp'         => 'string',
+                    'link_dokumen_undangan' => 'string',
+                    'link_dokumen_lpj'      => 'string',
+                    'file_dokumen_lpj'      => 'string',
+                    'no_hp'                 => 'string',
+                    'file_pengajuan_reward' => 'string',
+                    'file_ktm'              => 'string',
+                    'file_surat_tugas'      => 'string',
+                    'url_kompetisi'         => 'string',
+                    'jumlah_pt_peserta'     => 'integer',
+                ];
+
+                foreach ($columnsToCheck as $col => $type) {
+                    if (!\Illuminate\Support\Facades\Schema::hasColumn('prestasi_mandiris', $col)) {
+                        $missingColumns[$col] = $type;
+                    }
+                }
+
+                if (!empty($missingColumns)) {
+                    \Illuminate\Support\Facades\Schema::table('prestasi_mandiris', function (\Illuminate\Database\Schema\Blueprint $table) use ($missingColumns) {
+                        foreach ($missingColumns as $col => $type) {
+                            if (!\Illuminate\Support\Facades\Schema::hasColumn('prestasi_mandiris', $col)) {
+                                if ($type === 'integer') {
+                                    $table->integer($col)->nullable();
+                                } else {
+                                    $table->string($col)->nullable();
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('PrestasiMandiri schema auto-migration error: ' . $e->getMessage());
+        }
+    }
+
     protected $fillable = [
         'level',
         'kategori',
