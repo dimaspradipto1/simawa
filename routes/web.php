@@ -75,8 +75,9 @@ Route::middleware(['auth', 'checkrole'])->group(function () {
     // Institusi Resource Routes
     Route::resource('institusi', InstitusiController::class);
 
-    // Logo Prodi Resource Routes
-    Route::resource('logo-prodi', LogoProdiController::class);
+    // Logo Ormawa & Prodi Resource Routes
+    Route::resource('logo-ormawa', LogoProdiController::class)->parameters(['logo-ormawa' => 'logoProdi'])->names('logo-prodi');
+    Route::get('logo-prodi', fn() => redirect()->route('logo-prodi.index'));
 
     // Pengaturan KTA Resource Routes (Superadmin & Admin BKAK)
     Route::get('kta-setting', [KtaSettingController::class, 'index'])->name('kta-setting.index');
