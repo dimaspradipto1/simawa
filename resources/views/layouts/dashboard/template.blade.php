@@ -28,11 +28,40 @@
     <link href="{{ asset('assets/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/simple-datatables/style.css') }}" rel="stylesheet">
 
-    <!-- Template Main CSS File -->
-    <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
+    <!-- Template Main CSS File (with cache buster) -->
+    <link href="{{ asset('assets/css/style.css') }}?v={{ file_exists(public_path('assets/css/style.css')) ? filemtime(public_path('assets/css/style.css')) : time() }}" rel="stylesheet">
 
     {{--  datatables CSS  --}}
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap5.css">
+
+    <!-- Global Layout Border & Shadow Enhancements -->
+    <style>
+        /* Header Border & Elevation Shadow */
+        .header {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        /* Sidebar Border & Elevation Shadow */
+        .sidebar {
+            background-color: #ffffff !important;
+            border-right: 1px solid #e2e8f0 !important;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        /* Footer Background, Border & Shadow */
+        .footer {
+            background-color: #ffffff !important;
+            border-top: 1px solid #e2e8f0 !important;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03) !important;
+            padding: 20px 0 !important;
+        }
+
+        #main {
+            min-height: calc(100vh - 120px);
+        }
+    </style>
 
 </head>
 
