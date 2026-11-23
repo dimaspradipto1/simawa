@@ -11,6 +11,8 @@ use App\Models\PrestasiMandiri;
 use App\Models\Rekognisi;
 use App\Models\Sertifikasi;
 use App\Models\User;
+use App\Models\SkpKegiatan;
+use App\Services\SkpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,6 +20,11 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        $user = Auth::user();
+        if ($user && $user->isWadek1()) {
+            return $this->dashboardWadek1($request, $user);
+        }
+
         $selectedTahun = $request->query('tahun', date('Y'));
         $selectedProdi = $request->query('prodi', 'all');
         $selectedJenis = $request->query('jenis', 'all');
@@ -345,6 +352,101 @@ class DashboardController extends Controller
             'chartJenisSeries',
             'timelineYears',
             'chartTahunSeries'
+        ));
+    }
+
+    /**
+     * Dashboard khusus Wakil Dekan 1 (Bidang Akademik Fakultas).
+     */
+    private function dashboardWadek1(Request $request, User $user)
+    {
+        SkpKegiatan::ensureSchemaCompatibility();
+
+        $fakultas = $user->fakultas ?: 'Fakultas Sains dan Teknologi';
+
+        // Base query kegiatan akademik khusus fakultas Wakil Dekan 1
+        $baseQuery = SkpKegiatan::forUser($user);
+
+        // Stats
+        $pendingCount = (clone $baseQuery)->where('status', 'Pending')->count();
+        $approvedCount = (clone $baseQuery)->where('status', 'Disetujui')->count();
+        $rejectedCount = (clone $baseQuery)->where('status', 'Ditolak')->count();
+        $totalPoin = (clone $baseQuery)->where('status', 'Disetujui')->sum('poin_skp');
+
+        // Publikasi & Karya Ilmiah (Jurnal SINTA, Scopus, Buku ber-ISBN, Paten)
+        $publikasiCount = (clone $baseQuery)
+            ->where('status', 'Disetujui')
+            ->where(function($q) {
+                $q->where('kategori_id', 'rekognisi')
+                  ->orWhere('jenis_kegiatan', 'LIKE', '%jurnal%')
+                  ->orWhere('jenis_kegiatan', 'LIKE', '%isbn%')
+                  ->orWhere('jenis_kegiatan', 'LIKE', '%paten%')
+                  ->orWhere('nama_kegiatan', 'LIKE', '%jurnal%')
+                  ->orWhere('nama_kegiatan', 'LIKE', '%buku%')
+                  ->orWhere('nama_kegiatan', 'LIKE', '%paten%');
+            })->count();
+
+        // Antrean 6 pengajuan akademik terbaru yang menunggu verifikasi WD 1
+        $pendingList = (clone $baseQuery)
+            ->where('status', 'Pending')
+            ->orderBy('created_at', 'desc')
+            ->take(6)
+            ->get();
+
+        // 5 kegiatan akademik yang baru disetujui
+        $recentApproved = (clone $baseQuery)
+            ->where('status', 'Disetujui')
+            ->orderBy('verified_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // Distribusi Capaian SKP per Program Studi di Fakultas ini
+        $prodis = (clone $baseQuery)->select('program_studi')
+            ->whereNotNull('program_studi')
+            ->distinct()
+            ->pluck('program_studi');
+
+        $prodiChartLabels = [];
+        $prodiChartPoints = [];
+        $prodiChartKegiatan = [];
+        foreach ($prodis as $prodiName) {
+            $prodiChartLabels[] = $prodiName;
+            $prodiChartPoints[] = (clone $baseQuery)->where('program_studi', $prodiName)->where('status', 'Disetujui')->sum('poin_skp');
+            $prodiChartKegiatan[] = (clone $baseQuery)->where('program_studi', $prodiName)->count();
+        }
+
+        // Top Mahasiswa Berprestasi Akademik di Fakultas ini
+        $topMahasiswa = (clone $baseQuery)
+            ->where('status', 'Disetujui')
+            ->selectRaw('user_id, nama_mahasiswa, nim, program_studi, SUM(poin_skp) as total_poin, COUNT(*) as total_kegiatan')
+            ->groupBy('user_id', 'nama_mahasiswa', 'nim', 'program_studi')
+            ->orderByDesc('total_poin')
+            ->take(5)
+            ->get()
+            ->map(function($item) {
+                $eval = SkpService::getGradeAndPredicate($item->total_poin);
+                $badge = SkpService::getDarmaBaktiKampusBadge($item->total_poin);
+                $item->grade = $eval['grade'];
+                $item->bobot = $eval['bobot'];
+                $item->predikat = $eval['predikat'];
+                $item->lencana = $badge['badge'];
+                return $item;
+            });
+
+        return view('pages.dashboard.wadek1', compact(
+            'user',
+            'fakultas',
+            'pendingCount',
+            'approvedCount',
+            'rejectedCount',
+            'totalPoin',
+            'publikasiCount',
+            'pendingList',
+            'recentApproved',
+            'prodiChartLabels',
+            'prodiChartPoints',
+            'prodiChartKegiatan',
+            'topMahasiswa'
         ));
     }
 }

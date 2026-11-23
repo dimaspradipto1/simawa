@@ -11,8 +11,8 @@
       </a>
     </li>
 
-    <!-- Rekapitulasi & Laporan (Superadmin, Admin BKAK, Kabid, Staff, Pimpinan, Prodi, Dosen Pendamping, WD 1) -->
-    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi', 'dosenpendamping', 'wadek1']))
+    <!-- Rekapitulasi & Laporan (Non-WD1) -->
+    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi', 'dosenpendamping']))
     <li class="nav-item">
       <a class="nav-link {{ request()->routeIs('rekapitulasi.*') ? '' : 'collapsed' }}" href="{{ route('rekapitulasi.index') }}">
         <i class="bi bi-file-earmark-bar-graph"></i>
@@ -21,8 +21,8 @@
     </li>
     @endif
 
-    <!-- 2. Penyelenggara (Superadmin, Admin BKAK, Kabid, Staff, Pimpinan, Prodi, WD 1) -->
-    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi', 'wadek1']))
+    <!-- 2. Penyelenggara (Non-WD1) -->
+    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi']))
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('kejuaraan.*') ? '' : 'collapsed' }}" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-layout-text-window-reverse"></i><span>Penyelenggara</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -37,7 +37,8 @@
       </li>
     @endif
 
-    <!-- 3. Prestasi (All Roles) -->
+    <!-- 3. Prestasi (Non-WD1 Roles) -->
+    @if(!auth()->user()->isWadek1())
     <li class="nav-item">
       <a class="nav-link {{ request()->routeIs('prestasi-belmawa.*', 'prestasi-mandiri.*', 'rekognisi.*', 'sertifikasi.*', 'template-lpj.*') ? '' : 'collapsed' }}" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-award"></i><span>Prestasi</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -61,7 +62,7 @@
           </li>
         @endif
 
-        @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi', 'mahasiswa', 'wadek1']))
+        @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi', 'mahasiswa']))
           <li>
             <a href="{{ route('rekognisi.index') }}" class="{{ request()->routeIs('rekognisi.*') ? 'active' : '' }}">
               <i class="bi bi-circle"></i><span>Rekognisi</span>
@@ -75,6 +76,7 @@
         @endif
       </ul>
     </li>
+    @endif
 
     <!-- 4. SKP Mahasiswa (Satuan Kredit Poin) -->
     <li class="nav-item">
@@ -95,9 +97,22 @@
           </li>
         @endif
         @if(auth()->user()->isWadek1() || auth()->user()->isAdmin())
+          @php
+            $wadekPendingCount = \App\Models\SkpKegiatan::where('sifat_kegiatan', 'Akademik')
+                ->where('status', 'Pending')
+                ->when(auth()->user()->isWadek1() && !empty(auth()->user()->fakultas) && !str_contains(strtolower(auth()->user()->fakultas), 'semua'), function($q) {
+                    $q->where('fakultas', auth()->user()->fakultas);
+                })
+                ->count();
+          @endphp
           <li>
-            <a href="{{ route('skp.index', ['sifat' => 'Akademik']) }}" class="{{ request()->get('sifat') === 'Akademik' ? 'active' : '' }}">
-              <i class="bi bi-circle"></i><span>Verifikasi Akademik (WD 1)</span>
+            <a href="{{ route('skp.index', ['sifat' => 'Akademik']) }}" class="d-flex align-items-center justify-content-between {{ request()->get('sifat') === 'Akademik' ? 'active' : '' }}">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-circle"></i><span>Verifikasi Akademik (WD 1)</span>
+              </div>
+              @if($wadekPendingCount > 0)
+                <span class="badge bg-danger rounded-pill px-2 py-1" style="font-size: 0.7rem;">{{ $wadekPendingCount }}</span>
+              @endif
             </a>
           </li>
         @endif
@@ -116,8 +131,8 @@
       </ul>
     </li>
 
-    <!-- 5. Tata Kelola (Superadmin, Admin BKAK, Kabid, Staff, Pimpinan, Prodi, WD 1) -->
-    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi', 'wadek1']))
+    <!-- 5. Tata Kelola (Non-WD1) -->
+    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi']))
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('institusi.*', 'dosen.*') ? '' : 'collapsed' }}" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-journal-text"></i><span>Tata Kelola</span><i class="bi bi-chevron-down ms-auto"></i>
