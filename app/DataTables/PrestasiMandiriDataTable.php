@@ -54,17 +54,23 @@ class PrestasiMandiriDataTable extends DataTable
                 return '<span class="badge ' . $badgeClass . ' px-2 py-1">' . e($status) . '</span>';
             })
             ->addColumn('action', function ($item) {
-                $editUrl = route('prestasi-mandiri.edit', $item->id);
-                $showUrl = route('prestasi-mandiri.show', $item->id);
-                $deleteUrl = route('prestasi-mandiri.destroy', $item->id);
-                $csrf = csrf_field();
-                $method = method_field('DELETE');
+                $user = auth()->user();
+                $isReadOnly = $user && in_array($user->role, ['kabid', 'pimpinan', 'wadek1']);
 
-                return '
+                $showUrl = route('prestasi-mandiri.show', $item->id);
+                $html = '
                     <div class="action-btn-group" role="group">
                         <a href="' . $showUrl . '" class="btn-action btn-action-view" title="Detail">
                             <i class="bi bi-eye"></i>
-                        </a>
+                        </a>';
+
+                if (!$isReadOnly) {
+                    $editUrl = route('prestasi-mandiri.edit', $item->id);
+                    $deleteUrl = route('prestasi-mandiri.destroy', $item->id);
+                    $csrf = csrf_field();
+                    $method = method_field('DELETE');
+
+                    $html .= '
                         <a href="' . $editUrl . '" class="btn-action btn-action-edit" title="Edit">
                             <i class="bi bi-pencil-square"></i>
                         </a>
@@ -74,8 +80,11 @@ class PrestasiMandiriDataTable extends DataTable
                             <button type="button" class="btn-action btn-action-delete btn-delete" title="Hapus">
                                 <i class="bi bi-trash"></i>
                             </button>
-                        </form>
-                    </div>';
+                        </form>';
+                }
+
+                $html .= '</div>';
+                return $html;
             })
             ->rawColumns(['id_formatted', 'lomba_kompetisi', 'nama_cabang', 'peringkat', 'pt', 'status', 'action'])
             ->setRowId('id');

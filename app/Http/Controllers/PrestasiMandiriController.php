@@ -115,6 +115,7 @@ class PrestasiMandiriController extends Controller
      */
     public function create()
     {
+        $this->authorizeManageAccess();
         $options = $this->getFormOptions();
         $prestasiMandiri = new PrestasiMandiri();
         $activeTemplateLpj = TemplateLpj::getActiveTemplate('Prestasi Mandiri');
@@ -129,6 +130,7 @@ class PrestasiMandiriController extends Controller
      */
     public function store(PrestasiMandiriRequest $request)
     {
+        $this->authorizeManageAccess();
         $validated = $request->validated();
 
         $mahasiswa = array_values(array_filter($request->input('data_mahasiswa', []), function ($item) {
@@ -273,6 +275,17 @@ class PrestasiMandiriController extends Controller
     }
 
     /**
+     * Authorize that read-only roles (kabid, pimpinan, wadek1) cannot mutate data
+     */
+    private function authorizeManageAccess(): void
+    {
+        $user = auth()->user();
+        if ($user && in_array($user->role, ['kabid', 'pimpinan', 'wadek1'])) {
+            abort(403, 'Akses Dibatasi: Kepala Bidang Kemahasiswaan dan Pimpinan hanya memiliki hak akses pemantauan (Read-Only) pada data prestasi.');
+        }
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(PrestasiMandiri $prestasiMandiri)
@@ -286,6 +299,7 @@ class PrestasiMandiriController extends Controller
      */
     public function edit(PrestasiMandiri $prestasiMandiri)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($prestasiMandiri);
         $options = $this->getFormOptions();
         $activeTemplateLpj = TemplateLpj::getActiveTemplate('Prestasi Mandiri');
@@ -300,6 +314,7 @@ class PrestasiMandiriController extends Controller
      */
     public function update(PrestasiMandiriRequest $request, PrestasiMandiri $prestasiMandiri)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($prestasiMandiri);
 
         $validated = $request->validated();
@@ -462,6 +477,7 @@ class PrestasiMandiriController extends Controller
      */
     public function destroy(Request $request, PrestasiMandiri $prestasiMandiri)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($prestasiMandiri);
 
         if ($prestasiMandiri->file_dokumen_sertifikat) {

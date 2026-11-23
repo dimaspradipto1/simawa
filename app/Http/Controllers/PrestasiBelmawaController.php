@@ -50,10 +50,22 @@ class PrestasiBelmawaController extends Controller
     }
 
     /**
+     * Authorize that read-only roles (kabid, pimpinan, wadek1) cannot mutate data
+     */
+    private function authorizeManageAccess(): void
+    {
+        $user = auth()->user();
+        if ($user && in_array($user->role, ['kabid', 'pimpinan', 'wadek1'])) {
+            abort(403, 'Akses Dibatasi: Kepala Bidang Kemahasiswaan dan Pimpinan hanya memiliki hak akses pemantauan (Read-Only) pada data prestasi.');
+        }
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
+        $this->authorizeManageAccess();
         $options = $this->getFormOptions();
         $prestasiBelmawa = new PrestasiBelmawa();
         return view('pages.prestasi-belmawa.create', compact('options', 'prestasiBelmawa'));
@@ -64,6 +76,7 @@ class PrestasiBelmawaController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorizeManageAccess();
         $validated = $request->validate([
             'nama_lomba'          => ['required', 'string', 'max:255'],
             'kategori_lomba'      => ['nullable', 'string', 'max:255'],
@@ -133,6 +146,7 @@ class PrestasiBelmawaController extends Controller
      */
     public function edit(PrestasiBelmawa $prestasiBelmawa)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($prestasiBelmawa);
         $options = $this->getFormOptions();
         return view('pages.prestasi-belmawa.edit', compact('options', 'prestasiBelmawa'));
@@ -143,6 +157,7 @@ class PrestasiBelmawaController extends Controller
      */
     public function update(Request $request, PrestasiBelmawa $prestasiBelmawa)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($prestasiBelmawa);
 
         $validated = $request->validate([
@@ -185,6 +200,7 @@ class PrestasiBelmawaController extends Controller
      */
     public function destroy(Request $request, PrestasiBelmawa $prestasiBelmawa)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($prestasiBelmawa);
 
         $prestasiBelmawa->delete();

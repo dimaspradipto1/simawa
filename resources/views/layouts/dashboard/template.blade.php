@@ -34,27 +34,27 @@
     {{--  datatables CSS  --}}
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap5.css">
 
-    <!-- Global Layout Border & Shadow Enhancements -->
+    <!-- Global Layout NiceAdmin Border & Elevation Shadow -->
     <style>
         /* Header Border & Elevation Shadow */
         .header {
             background-color: #ffffff !important;
-            border-bottom: 1px solid #e2e8f0 !important;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+            border-bottom: 1px solid #e0e5f2 !important;
+            box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1) !important;
         }
 
         /* Sidebar Border & Elevation Shadow */
         .sidebar {
             background-color: #ffffff !important;
-            border-right: 1px solid #e2e8f0 !important;
-            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05) !important;
+            border-right: 1px solid #e0e5f2 !important;
+            box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1) !important;
         }
 
         /* Footer Background, Border & Shadow */
         .footer {
             background-color: #ffffff !important;
-            border-top: 1px solid #e2e8f0 !important;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03) !important;
+            border-top: 1px solid #e0e5f2 !important;
+            box-shadow: 0px -2px 15px rgba(1, 41, 112, 0.05) !important;
             padding: 20px 0 !important;
         }
 

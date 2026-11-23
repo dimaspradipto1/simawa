@@ -30,9 +30,11 @@
                         <h5 class="card-title m-0 p-0 text-dark fw-bold">Daftar Prestasi Belmawa</h5>
                         <small class="text-muted">Data kompetisi dan prestasi mahasiswa yang diselenggarakan oleh Direktorat Belmawa Kemendikbudristek.</small>
                     </div>
+                    @if(!in_array(auth()->user()->role, ['kabid', 'pimpinan', 'wadek1']))
                     <a href="{{ route('prestasi-belmawa.create') }}" class="btn btn-primary btn-sm rounded-2">
                         <i class="bi bi-plus-lg me-1"></i> Tambah Prestasi Belmawa
                     </a>
+                    @endif
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

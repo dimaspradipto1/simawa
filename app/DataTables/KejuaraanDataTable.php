@@ -66,19 +66,26 @@ class KejuaraanDataTable extends DataTable
                 return '<span class="badge bg-light text-primary border fw-bold"><i class="bi bi-people me-1"></i>' . e($model->jumlah_peserta ?? 0) . ' Peserta</span>';
             })
             ->addColumn('action', function (Kejuaraan $model) {
-                return '
-                <div class="action-btn-group" role="group">
+                $user = auth()->user();
+                $isReadOnly = $user && in_array($user->role, ['kabid', 'pimpinan', 'wadek1']);
+
+                $html = '<div class="action-btn-group" role="group">
                     <a href="' . route('kejuaraan.show', $model->id) . '" class="btn-action btn-action-view" title="Detail">
                         <i class="bi bi-eye"></i>
-                    </a>
+                    </a>';
+
+                if (!$isReadOnly) {
+                    $html .= '
                     <a href="' . route('kejuaraan.edit', $model->id) . '" class="btn-action btn-action-edit" title="Edit">
                         <i class="bi bi-pencil-square"></i>
                     </a>
                     <button type="button" class="btn-action btn-action-delete btn-delete" data-id="' . $model->id . '" data-name="' . e($model->nama_ajang) . '" title="Hapus">
                         <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-                ';
+                    </button>';
+                }
+
+                $html .= '</div>';
+                return $html;
             })
             ->rawColumns(['ajang_lomba', 'jenis_penyelenggaraan', 'tingkat_level', 'tempat', 'tahun', 'nama_pt', 'status', 'peserta', 'action']);
     }

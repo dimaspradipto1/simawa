@@ -54,9 +54,11 @@
                     <div>
                         <h5 class="card-title m-0 p-0 text-dark fw-bold">Daftar Kejuaraan</h5>
                     </div>
+                    @if(!in_array(auth()->user()->role, ['kabid', 'pimpinan', 'wadek1']))
                     <a href="{{ route('kejuaraan.create') }}" class="btn btn-dark btn-sm rounded-2 px-3" style="background-color: #0f172a; border-color: #0f172a;">
                         <i class="bi bi-plus-lg me-1"></i> Tambah Data
                     </a>
+                    @endif
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

@@ -63,19 +63,27 @@ class PrestasiBelmawaDataTable extends DataTable
                 return '<span class="badge ' . $badge . ' px-2 py-1">' . e($status) . '</span>';
             })
             ->addColumn('action', function (PrestasiBelmawa $model) {
-                return '
+                $user = auth()->user();
+                $isReadOnly = $user && in_array($user->role, ['kabid', 'pimpinan', 'wadek1']);
+
+                $html = '
                 <div class="action-btn-group" role="group">
                     <a href="' . route('prestasi-belmawa.show', $model->id) . '" class="btn-action btn-action-view" title="Detail">
                         <i class="bi bi-eye"></i>
-                    </a>
+                    </a>';
+
+                if (!$isReadOnly) {
+                    $html .= '
                     <a href="' . route('prestasi-belmawa.edit', $model->id) . '" class="btn-action btn-action-edit" title="Edit">
                         <i class="bi bi-pencil-square"></i>
                     </a>
                     <button type="button" class="btn-action btn-action-delete btn-delete" data-id="' . $model->id . '" data-name="' . e($model->nama_lomba) . '" title="Hapus">
                         <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-                ';
+                    </button>';
+                }
+
+                $html .= '</div>';
+                return $html;
             })
             ->rawColumns(['lomba_kompetisi', 'capaian_prestasi', 'tahun', 'nama_pt', 'keterangan', 'action']);
     }

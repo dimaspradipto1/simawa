@@ -65,10 +65,12 @@
                                 <small class="text-muted">Menampilkan data sesuai cakupan perguruan tinggi pengguna untuk
                                     semua tahun.</small>
                             </div>
+                            @if(!in_array(auth()->user()->role, ['kabid', 'pimpinan', 'wadek1']))
                             <a href="{{ route('sertifikasi.create') }}" class="btn btn-dark btn-sm px-3 rounded-2 shadow-sm"
                                 style="background-color: #0f172a; border-color: #0f172a;">
                                 <i class="bi bi-plus-lg me-1"></i> Tambah Data
                             </a>
+                            @endif
                         </div>
 
                         <div class="table-responsive">

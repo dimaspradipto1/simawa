@@ -33,10 +33,22 @@ class SertifikasiController extends Controller
     }
 
     /**
+     * Authorize that read-only roles (kabid, pimpinan, wadek1) cannot mutate data
+     */
+    private function authorizeManageAccess(): void
+    {
+        $user = auth()->user();
+        if ($user && in_array($user->role, ['kabid', 'pimpinan', 'wadek1'])) {
+            abort(403, 'Akses Dibatasi: Kepala Bidang Kemahasiswaan dan Pimpinan hanya memiliki hak akses pemantauan (Read-Only) pada data sertifikasi.');
+        }
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
+        $this->authorizeManageAccess();
         $options = $this->getFormOptions();
         $sertifikasi = new Sertifikasi();
         return view('pages.sertifikasi.create', compact('options', 'sertifikasi'));
@@ -47,6 +59,7 @@ class SertifikasiController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorizeManageAccess();
         $validated = $request->validate([
             'level'                   => ['required', 'string'],
             'nama_sertifikasi'        => ['required', 'string', 'max:255'],
@@ -152,6 +165,7 @@ class SertifikasiController extends Controller
      */
     public function edit(Sertifikasi $sertifikasi)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($sertifikasi);
         $options = $this->getFormOptions();
         return view('pages.sertifikasi.edit', compact('options', 'sertifikasi'));
@@ -162,6 +176,7 @@ class SertifikasiController extends Controller
      */
     public function update(Request $request, Sertifikasi $sertifikasi)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($sertifikasi);
 
         $validated = $request->validate([
@@ -225,6 +240,7 @@ class SertifikasiController extends Controller
      */
     public function destroy(Request $request, Sertifikasi $sertifikasi)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($sertifikasi);
 
         $sertifikasi->delete();

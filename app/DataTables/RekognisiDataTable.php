@@ -51,17 +51,23 @@ class RekognisiDataTable extends DataTable
                 return '<span class="badge ' . $badgeClass . ' px-2 py-1">' . e($status) . '</span>';
             })
             ->addColumn('action', function ($item) {
-                $editUrl = route('rekognisi.edit', $item->id);
-                $showUrl = route('rekognisi.show', $item->id);
-                $deleteUrl = route('rekognisi.destroy', $item->id);
-                $csrf = csrf_field();
-                $method = method_field('DELETE');
+                $user = auth()->user();
+                $isReadOnly = $user && in_array($user->role, ['kabid', 'pimpinan', 'wadek1']);
 
-                return '
+                $showUrl = route('rekognisi.show', $item->id);
+                $html = '
                     <div class="action-btn-group" role="group">
                         <a href="' . $showUrl . '" class="btn-action btn-action-view" title="Detail">
                             <i class="bi bi-eye"></i>
-                        </a>
+                        </a>';
+
+                if (!$isReadOnly) {
+                    $editUrl = route('rekognisi.edit', $item->id);
+                    $deleteUrl = route('rekognisi.destroy', $item->id);
+                    $csrf = csrf_field();
+                    $method = method_field('DELETE');
+
+                    $html .= '
                         <a href="' . $editUrl . '" class="btn-action btn-action-edit" title="Edit">
                             <i class="bi bi-pencil-square"></i>
                         </a>
@@ -71,8 +77,11 @@ class RekognisiDataTable extends DataTable
                             <button type="button" class="btn-action btn-action-delete btn-delete" title="Hapus">
                                 <i class="bi bi-trash"></i>
                             </button>
-                        </form>
-                    </div>';
+                        </form>';
+                }
+
+                $html .= '</div>';
+                return $html;
             })
             ->rawColumns(['id_formatted', 'nama_rekognisi', 'jenis', 'level', 'pt', 'status', 'action'])
             ->setRowId('id');

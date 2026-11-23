@@ -54,10 +54,22 @@ class KejuaraanController extends Controller
     }
 
     /**
+     * Authorize that read-only roles (kabid, pimpinan, wadek1) cannot mutate data
+     */
+    private function authorizeManageAccess(): void
+    {
+        $user = auth()->user();
+        if ($user && in_array($user->role, ['kabid', 'pimpinan', 'wadek1'])) {
+            abort(403, 'Akses Dibatasi: Kepala Bidang Kemahasiswaan dan Pimpinan hanya memiliki hak akses pemantauan (Read-Only) pada data kejuaraan.');
+        }
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
+        $this->authorizeManageAccess();
         $options = $this->getFormOptions();
         $kejuaraan = new Kejuaraan();
         return view('pages.kejuaraan.create', compact('options', 'kejuaraan'));
@@ -68,6 +80,7 @@ class KejuaraanController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorizeManageAccess();
         $validated = $request->validate([
             'nama_ajang'             => ['required', 'string', 'max:255'],
             'jenis_penyelenggaraan' => ['required', 'string'],
@@ -112,6 +125,7 @@ class KejuaraanController extends Controller
      */
     public function edit(Kejuaraan $kejuaraan)
     {
+        $this->authorizeManageAccess();
         $options = $this->getFormOptions();
         return view('pages.kejuaraan.edit', compact('options', 'kejuaraan'));
     }
@@ -121,6 +135,7 @@ class KejuaraanController extends Controller
      */
     public function update(Request $request, Kejuaraan $kejuaraan)
     {
+        $this->authorizeManageAccess();
         $validated = $request->validate([
             'nama_ajang'             => ['required', 'string', 'max:255'],
             'jenis_penyelenggaraan' => ['required', 'string'],
@@ -153,6 +168,7 @@ class KejuaraanController extends Controller
      */
     public function destroy(Request $request, Kejuaraan $kejuaraan)
     {
+        $this->authorizeManageAccess();
         $kejuaraan->delete();
 
         if ($request->ajax()) {

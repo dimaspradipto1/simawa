@@ -113,11 +113,13 @@
                                     </div>
                                 @endif
 
+                                @if(!in_array(auth()->user()->role, ['kabid', 'pimpinan', 'wadek1']))
                                 <a href="{{ route('prestasi-mandiri.create') }}"
                                     class="btn btn-dark btn-sm px-3 rounded-2 shadow-sm"
                                     style="background-color: #0f172a; border-color: #0f172a;">
                                     <i class="bi bi-plus-lg me-1"></i>Tambah Data
                                 </a>
+                                @endif
                             </div>
                         </div>
 

@@ -40,10 +40,22 @@ class RekognisiController extends Controller
     }
 
     /**
+     * Authorize that read-only roles (kabid, pimpinan, wadek1) cannot mutate data
+     */
+    private function authorizeManageAccess(): void
+    {
+        $user = auth()->user();
+        if ($user && in_array($user->role, ['kabid', 'pimpinan', 'wadek1'])) {
+            abort(403, 'Akses Dibatasi: Kepala Bidang Kemahasiswaan dan Pimpinan hanya memiliki hak akses pemantauan (Read-Only) pada data rekognisi.');
+        }
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
+        $this->authorizeManageAccess();
         $options = $this->getFormOptions();
         $rekognisi = new Rekognisi();
         return view('pages.rekognisi.create', compact('options', 'rekognisi'));
@@ -54,6 +66,7 @@ class RekognisiController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorizeManageAccess();
         $validated = $request->validate([
             'level'                   => ['required', 'string'],
             'nama_rekognisi'          => ['required', 'string', 'max:255'],
@@ -161,6 +174,7 @@ class RekognisiController extends Controller
      */
     public function edit(Rekognisi $rekognisi)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($rekognisi);
         $options = $this->getFormOptions();
         return view('pages.rekognisi.edit', compact('options', 'rekognisi'));
@@ -171,6 +185,7 @@ class RekognisiController extends Controller
      */
     public function update(Request $request, Rekognisi $rekognisi)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($rekognisi);
 
         $validated = $request->validate([
@@ -236,6 +251,7 @@ class RekognisiController extends Controller
      */
     public function destroy(Request $request, Rekognisi $rekognisi)
     {
+        $this->authorizeManageAccess();
         $this->authorizeStudentAccess($rekognisi);
 
         $rekognisi->delete();
