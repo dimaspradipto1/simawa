@@ -234,10 +234,10 @@ h6 {
 
 /* Card */
 .card {
-  margin-bottom: 30px;
-  border: none;
-  border-radius: 5px;
-  box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
+  margin-bottom: 25px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
 }
 
 .card-header,
@@ -1417,4 +1417,96 @@ h6 {
 }
 .btn:active {
   transform: translateY(0);
+}
+
+/*--------------------------------------------------------------
+# High-Contrast DataTables & Table Grid Lines
+--------------------------------------------------------------*/
+.table,
+table.dataTable {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  margin-top: 8px !important;
+  margin-bottom: 16px !important;
+}
+
+.table thead th,
+table.dataTable thead th {
+  background-color: #f1f5f9 !important;
+  color: #1e293b !important;
+  font-weight: 700 !important;
+  font-size: 0.82rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 2px solid #cbd5e1 !important;
+  border-right: 1px solid #e2e8f0 !important;
+  padding: 12px 14px !important;
+  vertical-align: middle !important;
+}
+
+.table thead th:last-child,
+table.dataTable thead th:last-child {
+  border-right: none !important;
+}
+
+.table tbody td,
+table.dataTable tbody td {
+  border-bottom: 1px solid #e2e8f0 !important;
+  border-right: 1px solid #f1f5f9 !important;
+  padding: 11px 14px !important;
+  color: #334155 !important;
+  vertical-align: middle !important;
+  background-color: #ffffff;
+}
+
+.table tbody td:last-child,
+table.dataTable tbody td:last-child {
+  border-right: none !important;
+}
+
+.table tbody tr:hover td,
+table.dataTable tbody tr:hover td {
+  background-color: #f8fafc !important;
+}
+
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  padding: 5px 10px !important;
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  font-size: 0.85rem !important;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus,
+.dataTables_wrapper .dataTables_length select:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+  outline: none !important;
+}
+
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+  font-size: 0.85rem !important;
+  color: #475569 !important;
+  padding-top: 10px !important;
+}
+
+.dataTables_wrapper .pagination .page-item .page-link {
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+  font-size: 0.85rem !important;
+  border-radius: 4px !important;
+  margin: 0 2px !important;
+}
+
+.dataTables_wrapper .pagination .page-item.active .page-link {
+  background-color: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
 }
