@@ -24,6 +24,9 @@ class DashboardController extends Controller
         if ($user && $user->isWadek1()) {
             return $this->dashboardWadek1($request, $user);
         }
+        if ($user && $user->isKabid()) {
+            return $this->dashboardKabid($request, $user);
+        }
 
         $selectedTahun = $request->query('tahun', date('Y'));
         $selectedProdi = $request->query('prodi', 'all');
@@ -447,6 +450,92 @@ class DashboardController extends Controller
             'prodiChartPoints',
             'prodiChartKegiatan',
             'topMahasiswa'
+        ));
+    }
+
+    /**
+     * Dashboard khusus Kabid Kemahasiswaan (Tingkat Universitas).
+     */
+    private function dashboardKabid(Request $request, User $user)
+    {
+        SkpKegiatan::ensureSchemaCompatibility();
+
+        // Base query kegiatan non-akademik se-universitas
+        $baseQuery = SkpKegiatan::where('sifat_kegiatan', 'Non-Akademik');
+
+        // Stats
+        $pendingCount = (clone $baseQuery)->where('status', 'Pending')->count();
+        $approvedCount = (clone $baseQuery)->where('status', 'Disetujui')->count();
+        $rejectedCount = (clone $baseQuery)->where('status', 'Ditolak')->count();
+        $totalPoinNonAkademik = (clone $baseQuery)->where('status', 'Disetujui')->sum('poin_skp');
+
+        // Data KTA & Ormawa
+        $mahasiswaUsers = User::where('role', 'mahasiswa')->get();
+        $allMahasiswaBerKta = $mahasiswaUsers->filter(function ($u) {
+            return !empty(trim((string)$u->organisasi));
+        })->values();
+        $totalMahasiswaBerKta = $allMahasiswaBerKta->count();
+
+        $ormawaDistribution = [];
+        foreach ($allMahasiswaBerKta as $u) {
+            $orgs = is_array($u->organisasi)
+                ? $u->organisasi
+                : array_filter(array_map('trim', explode(',', (string)$u->organisasi)));
+            foreach ($orgs as $org) {
+                if ($org) {
+                    $ormawaDistribution[$org] = ($ormawaDistribution[$org] ?? 0) + 1;
+                }
+            }
+        }
+        arsort($ormawaDistribution);
+        $topOrmawa = array_slice($ormawaDistribution, 0, 5, true);
+
+        // Antrean 6 pengajuan non-akademik terbaru yang menunggu verifikasi Kabid
+        $pendingList = (clone $baseQuery)
+            ->where('status', 'Pending')
+            ->orderBy('created_at', 'desc')
+            ->take(6)
+            ->get();
+
+        // Top Mahasiswa Non-Akademik Tertinggi se-Universitas
+        $topMahasiswa = (clone $baseQuery)
+            ->where('status', 'Disetujui')
+            ->selectRaw('user_id, nama_mahasiswa, nim, program_studi, SUM(poin_skp) as total_poin')
+            ->groupBy('user_id', 'nama_mahasiswa', 'nim', 'program_studi')
+            ->orderByDesc('total_poin')
+            ->take(5)
+            ->get()
+            ->map(function($item) {
+                $eval = SkpService::getGradeAndPredicate($item->total_poin);
+                $item->grade = $eval['grade'];
+                return $item;
+            });
+
+        // Perbandingan capaian per fakultas
+        $fakultasItems = (clone $baseQuery)
+            ->where('status', 'Disetujui')
+            ->selectRaw('fakultas, SUM(poin_skp) as total_poin, COUNT(*) as total_kegiatan')
+            ->whereNotNull('fakultas')
+            ->groupBy('fakultas')
+            ->get();
+
+        $fakultasLabels = $fakultasItems->pluck('fakultas')->toArray();
+        $fakultasPoints = $fakultasItems->pluck('total_poin')->map(fn($v) => (int)$v)->toArray();
+        $fakultasKegiatan = $fakultasItems->pluck('total_kegiatan')->map(fn($v) => (int)$v)->toArray();
+
+        return view('pages.dashboard.kabid', compact(
+            'user',
+            'pendingCount',
+            'approvedCount',
+            'rejectedCount',
+            'totalPoinNonAkademik',
+            'totalMahasiswaBerKta',
+            'topOrmawa',
+            'pendingList',
+            'topMahasiswa',
+            'fakultasLabels',
+            'fakultasPoints',
+            'fakultasKegiatan'
         ));
     }
 }

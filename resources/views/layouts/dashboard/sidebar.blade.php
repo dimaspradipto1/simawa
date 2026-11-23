@@ -54,7 +54,7 @@
             <i class="bi bi-circle"></i><span>Prestasi Mandiri</span>
           </a>
         </li>
-        @if(auth()->user()->role !== 'mahasiswa')
+        @if(!in_array(auth()->user()->role, ['mahasiswa', 'kabid']))
           <li>
             <a href="{{ route('template-lpj.index') }}" class="{{ request()->routeIs('template-lpj.*') ? 'active' : '' }}">
               <i class="bi bi-circle"></i><span>Template LPJ</span>
@@ -117,9 +117,19 @@
           </li>
         @endif
         @if(auth()->user()->isKabid() || auth()->user()->isAdmin())
+          @php
+            $kabidPendingCount = \App\Models\SkpKegiatan::where('sifat_kegiatan', 'Non-Akademik')
+                ->where('status', 'Pending')
+                ->count();
+          @endphp
           <li>
-            <a href="{{ route('skp.index', ['sifat' => 'Non-Akademik']) }}" class="{{ request()->get('sifat') === 'Non-Akademik' ? 'active' : '' }}">
-              <i class="bi bi-circle"></i><span>Verifikasi Non-Akademik (Kabid)</span>
+            <a href="{{ route('skp.index', ['sifat' => 'Non-Akademik']) }}" class="d-flex align-items-center justify-content-between {{ request()->get('sifat') === 'Non-Akademik' ? 'active' : '' }}">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-circle"></i><span>Verifikasi Non-Akademik (Kabid)</span>
+              </div>
+              @if($kabidPendingCount > 0)
+                <span class="badge bg-danger rounded-pill px-2 py-1" style="font-size: 0.7rem;">{{ $kabidPendingCount }}</span>
+              @endif
             </a>
           </li>
         @endif
@@ -131,8 +141,8 @@
       </ul>
     </li>
 
-    <!-- 5. Tata Kelola (Non-WD1) -->
-    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi']))
+    {{-- Tata Kelola (Superadmin, Admin BKAK, Staff, Pimpinan, Prodi - Non-WD1 & Non-Kabid) --}}
+    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'staff', 'pimpinan', 'prodi']))
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('institusi.*', 'dosen.*') ? '' : 'collapsed' }}" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-journal-text"></i><span>Tata Kelola</span><i class="bi bi-chevron-down ms-auto"></i>
