@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="pagetitle">
-  <h1>Buku Transkrip SKP Mahasiswa</h1>
+  <h1>Transkrip SKP Mahasiswa</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>

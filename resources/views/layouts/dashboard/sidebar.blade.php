@@ -110,7 +110,7 @@
         @endif
         <li>
           <a href="{{ route('skp.transkrip') }}" class="{{ request()->routeIs('skp.transkrip') ? 'active' : '' }}">
-            <i class="bi bi-circle"></i><span>{{ auth()->user()->isMahasiswa() ? 'Buku Transkrip SKP' : 'Buku Transkrip Mahasiswa' }}</span>
+            <i class="bi bi-circle"></i><span>{{ auth()->user()->isMahasiswa() ? 'Transkrip SKP' : 'Transkrip SKP Mahasiswa' }}</span>
           </a>
         </li>
       </ul>

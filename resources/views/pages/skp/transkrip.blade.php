@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="pagetitle">
-  <h1>Buku Transkrip Satuan Kredit Poin (SKP)</h1>
+  <h1>Transkrip Satuan Kredit Poin (SKP)</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>

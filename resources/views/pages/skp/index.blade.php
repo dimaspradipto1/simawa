@@ -107,7 +107,7 @@
             </a>
           @endif
           <a href="{{ route('skp.transkrip') }}" class="btn btn-outline-primary px-3 py-2 rounded-pill shadow-sm d-inline-flex align-items-center">
-            <i class="bi bi-file-earmark-text me-2"></i> {{ auth()->user()->isMahasiswa() ? 'Lihat Transkrip SKP Saya' : 'Buku Transkrip SKP' }}
+            <i class="bi bi-file-earmark-text me-2"></i> {{ auth()->user()->isMahasiswa() ? 'Lihat Transkrip SKP Saya' : 'Transkrip SKP' }}
           </a>
         </div>
       </div>
