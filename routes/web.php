@@ -16,6 +16,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\KtaSettingController;
 use App\Http\Controllers\DatabaseBackupController;
 use App\Http\Controllers\GoogleDriveAuthController;
+use App\Http\Controllers\SkpMahasiswaController;
 use Illuminate\Support\Facades\Route;
 
 // Google Drive OAuth Callback
@@ -62,6 +63,13 @@ Route::middleware(['auth', 'checkrole'])->group(function () {
     Route::get('prestasi-mandiri/{prestasi_mandiri}/download-lpj', [PrestasiMandiriController::class, 'downloadUploadedLpj'])->name('prestasi-mandiri.download-lpj');
     Route::get('prestasi-mandiri/{prestasi_mandiri}/download-file/{type}', [PrestasiMandiriController::class, 'downloadFile'])->name('prestasi-mandiri.download-file');
     Route::resource('prestasi-mandiri', PrestasiMandiriController::class);
+
+    // Satuan Kredit Poin (SKP) Mahasiswa Routes
+    Route::get('skp/calculate-preview', [SkpMahasiswaController::class, 'calculatePreview'])->name('skp.calculate-preview');
+    Route::get('skp/transkrip/{user?}', [SkpMahasiswaController::class, 'transkrip'])->name('skp.transkrip');
+    Route::get('skp/transkrip/{user}/cetak', [SkpMahasiswaController::class, 'cetakPdf'])->name('skp.cetak-pdf');
+    Route::post('skp/{skp}/verify', [SkpMahasiswaController::class, 'verify'])->name('skp.verify');
+    Route::resource('skp', SkpMahasiswaController::class);
 
     // Rekognisi Resource Routes
     Route::resource('rekognisi', RekognisiController::class);

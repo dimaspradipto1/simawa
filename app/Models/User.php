@@ -89,6 +89,26 @@ class User extends Authenticatable
         return $map;
     }
 
+    public function isWadek1(): bool
+    {
+        return $this->role === 'wadek1';
+    }
+
+    public function isKabid(): bool
+    {
+        return $this->role === 'kabid';
+    }
+
+    public function isMahasiswa(): bool
+    {
+        return $this->role === 'mahasiswa';
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['superadmin', 'adminbkak']);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

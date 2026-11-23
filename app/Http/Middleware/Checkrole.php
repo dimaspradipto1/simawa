@@ -24,6 +24,7 @@ class Checkrole
             Auth::user() -> role == 'pimpinan' ||
             Auth::user() -> role == 'prodi' ||
             Auth::user() -> role == 'dosenpendamping' ||
+            Auth::user() -> role == 'wadek1' ||
             Auth::user() -> role == 'mahasiswa' 
         ){
             return $next($request);

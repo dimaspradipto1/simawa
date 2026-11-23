@@ -41,6 +41,7 @@ class UserDataTable extends DataTable
                     'superadmin'       => 'bg-danger',
                     'adminbkak'        => 'bg-warning text-dark',
                     'kabid'            => 'bg-info text-dark',
+                    'wadek1'           => 'bg-primary text-white',
                     'staff'            => 'bg-primary',
                     'pimpinan'         => 'bg-dark',
                     'prodi'            => 'bg-secondary',
