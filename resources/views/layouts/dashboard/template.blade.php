@@ -34,32 +34,37 @@
     {{--  datatables CSS  --}}
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap5.css">
 
-    <!-- Global Layout NiceAdmin Border & Elevation Shadow -->
+    <!-- Global Layout High-Contrast Border & Elevation Shadow -->
     <style>
-        /* Header Border & Elevation Shadow */
-        .header {
-            background-color: #ffffff !important;
-            border-bottom: 1px solid #e0e5f2 !important;
-            box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1) !important;
+        body {
+            background-color: #f1f5f9 !important;
         }
 
-        /* Sidebar Border & Elevation Shadow */
+        #main {
+            background-color: #f1f5f9 !important;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Header Border & Elevation Shadow (High contrast on all laptop monitors) */
+        .header {
+            background-color: #ffffff !important;
+            border-bottom: 1.5px solid #cbd5e1 !important;
+            box-shadow: 0 4px 16px rgba(1, 41, 112, 0.12), 0 2px 4px rgba(1, 41, 112, 0.08) !important;
+        }
+
+        /* Sidebar Border & Elevation Shadow (High contrast on all laptop monitors) */
         .sidebar {
             background-color: #ffffff !important;
-            border-right: 1px solid #e0e5f2 !important;
-            box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1) !important;
+            border-right: 1.5px solid #cbd5e1 !important;
+            box-shadow: 4px 0 20px rgba(1, 41, 112, 0.12), 2px 0 6px rgba(1, 41, 112, 0.06) !important;
         }
 
         /* Footer Background, Border & Shadow */
         .footer {
             background-color: #ffffff !important;
-            border-top: 1px solid #e0e5f2 !important;
-            box-shadow: 0px -2px 15px rgba(1, 41, 112, 0.05) !important;
+            border-top: 1.5px solid #cbd5e1 !important;
+            box-shadow: 0px -4px 16px rgba(1, 41, 112, 0.08) !important;
             padding: 20px 0 !important;
-        }
-
-        #main {
-            min-height: calc(100vh - 120px);
         }
     </style>
 
